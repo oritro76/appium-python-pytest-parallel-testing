@@ -14,7 +14,11 @@ scenarios('../features/wrong_otp_input.feature')
 @when('enter wrong OTP', target_fixture="enter_wrong_otp")
 def enter_wrong_otp(appium_driver):
     otp_input_activity = OTPInputActivity(appium_driver.connect())
+
     otp = DataGenerator().get_random_otp()
+
+    logger_test.info(f"Entering wrong otp {otp}")
+
     otp_input_activity.enter_otp(otp=otp)
 
 
@@ -22,6 +26,8 @@ def enter_wrong_otp(appium_driver):
       target_fixture='check_correct_error_message_is_shown_for_wrong_otp')
 def check_correct_error_message_is_shown_for_wrong_otp(appium_driver, err_text):
     otp_input_activity = OTPInputActivity(appium_driver.connect())
+
+    logger_test.info(f"Checking for correct error message {err_text} after entering wrong otp")
     error_text = otp_input_activity.get_text(otp_input_activity.error_indicator)
 
     assert_that(error_text).contains(err_text)
