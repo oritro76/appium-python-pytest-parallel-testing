@@ -2,11 +2,6 @@ from pytest_bdd import when, then, scenarios, parsers, given
 
 from loguru import logger
 
-from data.data_gen import DataGenerator
-
-from activities.otp_input_activity import OTPInputActivity
-from activities.onboard_success_activity import OnboardSuccessActivity
-
 scenarios('../features/onboard_to_choco_app.feature',)
 
 

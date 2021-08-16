@@ -14,7 +14,7 @@
     And  enter valid country code in search field to filter
     And tap on valid country from the filtered search result
     And enter valid phone number
-    And tap on "Continue" button and button will be disabled
+    And tap on "Continue" button
     And enter valid OTP
     Then am taken to success activity and shown the message "Welcome to Choco!!"
     And close the choco app
@@ -24,7 +24,7 @@
     And  enter valid country code in search field to filter
     And tap on valid country from the filtered search result
     And enter valid phone number
-    And tap on "Continue" button and button will be disabled
+    And tap on "Continue" button
     And enter valid OTP
     Then am taken to success activity and shown the message "Welcome to Choco!!"
     And close the choco app
@@ -34,7 +34,7 @@
     And tap on country code
     And  enter valid country code in search field to filter
     And tap on valid country from the filtered search result
-    And tap on "Continue" button and button will be disabled
+    And tap on "Continue" button
     And enter valid OTP
     Then am taken to success activity and shown the message "Welcome to Choco!!"
     And close the choco app

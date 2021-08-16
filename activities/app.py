@@ -4,13 +4,15 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException
 from loguru import logger
 
+from conf.conf import TIMEOUT_FIND_LOCATOR
+
 
 class App:
 
     def __init__(self, driver):
         self.driver = driver
 
-    def find_element(self, locator, timeout=30):
+    def find_element(self, locator, timeout=TIMEOUT_FIND_LOCATOR):
         ignored_exceptions = (NoSuchElementException, StaleElementReferenceException,)
         wait = WebDriverWait(driver=self.driver, timeout=int(timeout), ignored_exceptions=ignored_exceptions)
 
@@ -21,7 +23,7 @@ class App:
             logger.critical("Could not locate element with value: %s" % str(locator))
             raise NoSuchElementException("Could not locate element with value: %s" % str(locator))
 
-    def find_elements(self, locator, timeout=20):
+    def find_elements(self, locator, timeout=TIMEOUT_FIND_LOCATOR):
         ignored_exceptions = (NoSuchElementException, StaleElementReferenceException,)
         wait = WebDriverWait(driver=self.driver, timeout=int(timeout), ignored_exceptions=ignored_exceptions)
         try:
