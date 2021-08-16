@@ -1,4 +1,4 @@
-@endtoend @debug
+@endtoend
 Feature: Choco App OTP Input Activity Title, Description and Phone Number
     As a user,
     I will see title

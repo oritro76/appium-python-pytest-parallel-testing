@@ -22,6 +22,17 @@ def enter_wrong_otp(appium_driver):
     otp_input_activity.enter_otp(otp=otp)
 
 
+@then(parsers.parse('"{loading_text}" text should be shown'),
+      target_fixture="check_loading_text_is_shown")
+def check_loading_text_is_shown(appium_driver, loading_text):
+    otp_input_activity = OTPInputActivity(appium_driver.connect())
+
+    logger.info(f"Checking for loading text {loading_text} after entering otp")
+    text = otp_input_activity.get_text(otp_input_activity.loading)
+
+    assert_that(text).contains(loading_text)
+
+
 @then(parsers.parse('error message "{err_text}" is shown for wrong otp'),
       target_fixture='check_correct_error_message_is_shown_for_wrong_otp')
 def check_correct_error_message_is_shown_for_wrong_otp(appium_driver, err_text):
@@ -31,3 +42,5 @@ def check_correct_error_message_is_shown_for_wrong_otp(appium_driver, err_text):
     error_text = otp_input_activity.get_text(otp_input_activity.error_indicator)
 
     assert_that(error_text).contains(err_text)
+
+

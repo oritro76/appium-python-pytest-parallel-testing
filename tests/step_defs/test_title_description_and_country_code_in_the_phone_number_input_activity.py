@@ -7,7 +7,8 @@ from activities.phone_number_input_activity import PhoneNumberInputActivity
 scenarios('../features/phone_number_input_activity_title_description_and_default_country_calling_code.feature')
 
 
-@then(parsers.parse('I see title "{title}"'), target_fixture='check_phone_number_input_activity_title')
+@then(parsers.parse('I see title "{title}"'),
+      target_fixture='check_phone_number_input_activity_title')
 def check_phone_number_input_activity_title(appium_driver, title):
     phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
 

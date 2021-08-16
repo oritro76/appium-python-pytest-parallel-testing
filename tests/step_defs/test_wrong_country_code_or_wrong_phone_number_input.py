@@ -12,7 +12,8 @@ scenarios('../features/wrong_country_code_or_wrong_phone_number_input.feature')
 
 
 
-@when('enter <text> in search field to filter', target_fixture="enter_text_to_filter_countries")
+@when('enter <text> in search field to filter',
+      target_fixture="enter_text_to_filter_countries")
 def enter_text_to_filter_countries(appium_driver, text):
     phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
 
@@ -22,7 +23,8 @@ def enter_text_to_filter_countries(appium_driver, text):
                                            text)
 
 
-@when(parsers.parse("enter valid/invalid phone_number <phone_number>"), target_fixture="enter_phone_number")
+@when(parsers.parse("enter valid/invalid phone_number <phone_number>"),
+      target_fixture="enter_phone_number")
 def enter_valid_or_invalid_phone_number(appium_driver, phone_number):
     phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
 

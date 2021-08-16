@@ -1,4 +1,4 @@
-@endtoend
+@endtoend @debug
 Feature: Wrong OTP input will show error message
   As a user,
   If I select correct country code and enter correct phone number
@@ -15,5 +15,8 @@ Background:
     And enter valid phone number
     And tap on "Continue" button
     And enter wrong OTP
-    Then error message "The code you entered was incorrect, are you sure you entered it correctly" is shown for wrong otp
+    Then "Loading" text should be shown
+    And error message "The code you entered was incorrect, are you sure you entered it correctly" is shown for wrong otp
+    And enter valid OTP
+    And am taken to success activity and shown the message "Welcome to Choco!!"
     And close the choco app
