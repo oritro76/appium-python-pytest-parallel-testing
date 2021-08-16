@@ -4,6 +4,8 @@ import pytest
 
 from driver.appium_driver import AppiumDriver
 from conf.conf import logger_logcat, logger_test
+from utils.functions import exceptions_handler
+
 
 def pytest_bdd_before_scenario(request, feature, scenario):
     logger_logcat.info(f"feature name: {feature.name}")
@@ -12,7 +14,7 @@ def pytest_bdd_before_scenario(request, feature, scenario):
 
     logger_test.info(f"{scenario.name} started")
 
-
+@exceptions_handler
 def pytest_bdd_after_scenario(request, feature, scenario):
     appium_driver = AppiumDriver()
 
@@ -31,7 +33,7 @@ def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, ste
 def pytest_bdd_after_step(request, feature, scenario, step, step_func, step_func_args):
     logger_logcat.info(f"{request.node.name} executed")
 
-
+@exceptions_handler
 def pytest_bdd_step_error(request, feature, scenario, step, step_func, step_func_args, exception):
     appium_driver = AppiumDriver()
     appium_driver.save_screenshot(scenario.name)

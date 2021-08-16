@@ -11,11 +11,14 @@ class DataGenerator:
     def get_valid_country(self):
         return VALID_COUNTRY
 
+
     def get_valid_country_calling_code(self):
         return VALID_COUNTRY_CALLING_CODE
 
+
     def get_valid_phone_number(self):
         return VALID_PHONE_NUMBER
+
 
     def get_valid_otp(self):
         return VALID_OTP

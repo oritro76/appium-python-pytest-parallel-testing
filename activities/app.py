@@ -2,7 +2,7 @@ from appium.webdriver.common.touch_action import TouchAction
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException
-from loguru import logger
+from conf.conf import logger_test
 
 
 class App:
@@ -51,7 +51,7 @@ class App:
             edit_texts[index].clear().send_keys(text[index])
 
     def get_text(self, locator):
-        logger.info(f'{locator}')
+        logger_test.debug(f'{locator}')
         el = self.find_element(locator)
         return el.text
 

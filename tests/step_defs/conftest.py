@@ -6,26 +6,25 @@ from conf.conf import logger_test
 from data.data_gen import DataGenerator
 from activities.phone_number_input_activity import PhoneNumberInputActivity
 from activities.otp_input_activity import OTPInputActivity
+from custom_excepitons.appium_exceptions import AppiumConnectionFailException
 
 
 @pytest.fixture(scope='session')
 def appium_driver():
     appium_driver = AppiumDriver()
+
     yield appium_driver
-    try:
-        appium_driver.quit()
-    except Exception as e:
-        logger_test.critical(e)
-        raise
+
+    appium_driver.quit()
 
 
 @given("the choco app is opened in a mobile", target_fixture="open_app")
 def open_app(appium_driver):
     try:
         appium_driver.connect()
-    except Exception as e:
+    except AppiumConnectionFailException as e:
         logger_test.critical(e)
-        raise
+        pytest.fail(msg=e.message)
 
 
 @then('close the choco app', target_fixture='close_app')
