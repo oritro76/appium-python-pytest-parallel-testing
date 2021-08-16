@@ -6,11 +6,11 @@ import io
 from PIL import Image
 from appium import webdriver
 import pytest
-
+from loguru import logger
 
 from devices.android.android_devices import android_desired_caps
 from devices.ios.ios_devices import ios_desired_caps
-from conf.conf import SCREENSHOT_PATH, logger_test
+from conf.conf import SCREENSHOT_PATH
 from custom_excepitons.appium_exceptions import AppiumConnectionFailException
 from custom_excepitons.env_variable_exceptions import EnvVariableNotSetException
 from utils.classes import SingletonMeta
@@ -21,38 +21,36 @@ class AppiumDriver(metaclass=SingletonMeta):
     ANDROID = 'android'
     IOS = 'ios'
 
+    if "DEVICE_TYPE" not in os.environ:
+        logger.critical(f"Env variable 'device_type' is not set")
+        raise EnvVariableNotSetException(f"Env variable 'device_type' is not set")
+
+    if "HUB_URL" not in os.environ:
+        logger.critical(f"Env variable 'hub_url' is not set")
+        raise EnvVariableNotSetException(f"Env variable 'hub_url' is not set")
+
+    device_type = os.getenv('DEVICE_TYPE')
+    logger.info(f'testing for device type {device_type}')
+
+    hub_url = os.getenv('HUB_URL')
+    logger.info(f'appium server url is {hub_url}')
+
     def connect(self):
-        if "DEVICE_TYPE" not in os.environ:
-            logger_test.critical(f"Env variable 'device_type' is not set")
-            raise EnvVariableNotSetException(f"Env variable 'device_type' is not set")
-
-        if "HUB_URL" not in os.environ:
-            logger_test.critical(f"Env variable 'hub_url' is not set")
-            raise EnvVariableNotSetException(f"Env variable 'hub_url' is not set")
-
-        device_type = os.getenv('DEVICE_TYPE')
-        logger_test.info(f'testing for device type {device_type}')
-
-
-
-        hub_url = os.getenv('HUB_URL')
-        logger_test.info(f'appium server url is {hub_url}')
-
 
         if self.connection is None:
-            if device_type.lower() == self.ANDROID:
+            if self.device_type.lower() == self.ANDROID:
                 try:
-                    self.connection = webdriver.Remote(command_executor=hub_url,
+                    self.connection = webdriver.Remote(command_executor=self.hub_url,
                                                        desired_capabilities=android_desired_caps)
                 except Exception as e:
-                    logger_test.exception(e)
+                    logger.exception(e)
                     raise AppiumConnectionFailException('Could not connect to appium server. '
                                                           'Please check if '
                                                           'appium server is running')
 
             else:
                 try:
-                    self.connection = webdriver.Remote(command_executor=hub_url,
+                    self.connection = webdriver.Remote(command_executor=self.hub_url,
                                                    desired_capabilities=ios_desired_caps)
                 except Exception as e:
                     raise AppiumConnectionFailException('Could not connect to appium server. '

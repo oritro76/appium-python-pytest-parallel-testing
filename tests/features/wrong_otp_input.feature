@@ -1,5 +1,6 @@
 @endtoend
-Feature: As a user,
+Feature: Wrong OTP input will show error message
+  As a user,
   If I select correct country code and enter correct phone number
   and enter wrong otp
   then error message is shown

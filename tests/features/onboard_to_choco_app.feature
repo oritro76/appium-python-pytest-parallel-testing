@@ -1,5 +1,5 @@
 @endtoend @successful_onboard
-  Feature: Choco App successful Onboard
+  Feature: Choco App Onboard
     As a user,
     I want to select country calling code
     and enter my mobile number
@@ -28,7 +28,7 @@
     And enter valid OTP
     Then am taken to success activity and shown the message "Welcome to Choco!!"
     And close the choco app
-  @debug
+
   Scenario: Onboard into choco app by entering phone number and then selecting country code
     When I enter valid phone number
     And tap on country code

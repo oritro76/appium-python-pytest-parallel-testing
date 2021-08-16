@@ -1,5 +1,6 @@
 @endtoend
-Feature: As a user,
+Feature: Entering wrong county calling code or phone number will show error message
+  As a user,
   If I enter wrong phone number or invalid phone number
   or select wrong country code
   then error message is shown

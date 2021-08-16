@@ -2,7 +2,7 @@ from appium.webdriver.common.touch_action import TouchAction
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException
-from conf.conf import logger_test
+from loguru import logger
 
 
 class App:
@@ -18,6 +18,7 @@ class App:
             return wait.until(EC.visibility_of_element_located(locator))
 
         except Exception as e:
+            logger.critical("Could not locate element with value: %s" % str(locator))
             raise NoSuchElementException("Could not locate element with value: %s" % str(locator))
 
     def find_elements(self, locator, timeout=10):
@@ -26,6 +27,7 @@ class App:
         try:
             return wait.until(EC.visibility_of_all_elements_located(locator))
         except TimeoutException as e:
+            logger.critical("Could not locate element with value: %s" % str(locator))
             raise NoSuchElementException("Could not locate element with value: %s" % str(locator))
 
     def tap(self, locator):
@@ -51,7 +53,7 @@ class App:
             edit_texts[index].clear().send_keys(text[index])
 
     def get_text(self, locator):
-        logger_test.debug(f'{locator}')
+        logger.debug(f'{locator}')
         el = self.find_element(locator)
         return el.text
 
