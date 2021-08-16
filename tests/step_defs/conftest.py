@@ -10,6 +10,10 @@ from custom_excepitons.appium_exceptions import AppiumConnectionFailException
 from custom_excepitons.choco_app_exception import ButtonTextMismatchException
 
 
+@pytest.fixture(scope='function')
+def context():
+    return {}
+
 @pytest.fixture(scope='session')
 def appium_driver():
     appium_driver = AppiumDriver()
@@ -47,7 +51,8 @@ def tap_on_country_code(appium_driver):
 
 
 @when("enter valid country code in search field to filter", target_fixture="enter_text_to_filter_countries")
-def enter_text_to_filter_countries(appium_driver):
+def enter_text_to_filter_countries(appium_driver, context):
+    context['country_code'] = DataGenerator().get_valid_country_calling_code()
     country_calling_code = DataGenerator().get_valid_country_calling_code()[1:]
     logger.info(f'Entering valid country code {country_calling_code} to filter')
     phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
@@ -65,7 +70,8 @@ def tap_on_country_from_filter_result(appium_driver):
 
 @when("enter valid phone number", target_fixture="enter_phone_number")
 @when("I enter valid phone number", target_fixture="enter_phone_number")
-def enter_phone_number(appium_driver):
+def enter_phone_number(appium_driver, context):
+    context['phone_number'] = DataGenerator().get_valid_phone_number()
     phone_number = DataGenerator().get_valid_phone_number()
     logger.info(f'Entering valid phone number {phone_number}')
     phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())

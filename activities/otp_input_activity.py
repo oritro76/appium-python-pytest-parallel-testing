@@ -6,8 +6,8 @@ from activities.app import App
 class OTPInputActivity(App):
 
     back_button = (MobileBy.CLASS_NAME, 'android.widget.ImageButton')
-    title = (MobileBy.ID, 'android.widget.ImageButton')
-    desciption = (MobileBy.ID, 'app.choco.dummyqa:id/description')
+    title = (MobileBy.ID, 'app.choco.dummyqa:id/title')
+    description = (MobileBy.ID, 'app.choco.dummyqa:id/description')
     otp_input = (MobileBy.CLASS_NAME, 'android.widget.EditText')
     error_indicator = (MobileBy.ID, 'app.choco.dummyqa:id/errorIndicator')
     loading = (MobileBy.ID, 'app.choco.dummyqa:id/loadingText')

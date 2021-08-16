@@ -10,7 +10,7 @@ class App:
     def __init__(self, driver):
         self.driver = driver
 
-    def find_element(self, locator, timeout=10):
+    def find_element(self, locator, timeout=30):
         ignored_exceptions = (NoSuchElementException, StaleElementReferenceException,)
         wait = WebDriverWait(driver=self.driver, timeout=int(timeout), ignored_exceptions=ignored_exceptions)
 
@@ -21,7 +21,7 @@ class App:
             logger.critical("Could not locate element with value: %s" % str(locator))
             raise NoSuchElementException("Could not locate element with value: %s" % str(locator))
 
-    def find_elements(self, locator, timeout=10):
+    def find_elements(self, locator, timeout=20):
         ignored_exceptions = (NoSuchElementException, StaleElementReferenceException,)
         wait = WebDriverWait(driver=self.driver, timeout=int(timeout), ignored_exceptions=ignored_exceptions)
         try:
@@ -53,7 +53,12 @@ class App:
             edit_texts[index].clear().send_keys(text[index])
 
     def get_text(self, locator):
-        logger.debug(f'{locator}')
         el = self.find_element(locator)
         return el.text
+
+    def is_element_displayed(self, locator):
+        return self.find_element(locator).is_displayed()
+
+    def is_element_enabled(self, locator):
+        return self.find_element(locator).is_enabled()
 
