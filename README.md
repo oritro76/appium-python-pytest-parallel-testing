@@ -1,49 +1,126 @@
-# qa-automation-exercise-template
-Exercise template for automation for Mobile devices.
+# Automated tests for Choco App
 
-**QA AUTOMATION HOMEWORK**
+**Tech Stack**
+Python 3.8, Appium, Pytest-BDD, Allure Reports
 
-Are you the the type of person with a keen eye for details, thriving for quality, with the technical passion of automating tests cases as much as possible but without fear on getting hands dirty with manual tasks? Show us what you are capable of, you will have the opportunity to taste a bit of what a Chocorian QA face everyday, so feel free to shine and show us your amazing skills.
+## Prerequisites
+1. Install Allure Reports from https://docs.qameta.io/allure/#_installing_a_commandline
+2. Install Android Studio from https://developer.android.com/studio
+3. Install Appium from https://appium.io/
+4. Install Python from https://www.python.org/downloads/
+5. Install virtualenv from https://virtualenv.pypa.io/en/latest/installation.html
 
-**PROCESS**
+## Project Structure At A Glance
+```
+|-- activities
+|   |-- app.py
+|   |-- __init__.py
+|   |-- onboard_success_activity.py
+|   |-- otp_input_activity.py
+|   `-- phone_number_input_activity.py
+|-- conf
+|   |-- conf.py
+|   `-- __init__.py
+|-- conftest.py
+|-- custom_excepitons
+|   |-- appium_exceptions.py
+|   |-- base_exception.py
+|   |-- env_variable_exceptions.py
+|   `-- __init__.py
+|-- data
+|   |-- apps
+|   |   |-- android
+|   |   |   `-- app-debug.apk
+|   |   `-- ios
+|   |-- data_gen.py
+|   |-- __init__.py
+|   `-- valid_data.py
+|-- definitions.py
+|-- devices
+|   |-- android
+|   |   |-- android_devices.py
+|   |   `-- __init__.py
+|   |-- __init__.py
+|   `-- ios
+|       |-- __init__.py
+|       `-- ios_devices.py
+|-- driver
+|   |-- appium_driver.py
+|   `-- __init__.py
+|-- logs
+|   `-- tests
+|-- pytest.ini
+|-- README.md
+|-- requirements.txt
+|-- runner.sh
+|-- screenshots
+|-- TESTCASES.MD
+|-- test_results
+|-- tests
+|   |-- features
+|   |   `-- onboard_to_choco_app.feature
+|   `-- step_defs
+|       |-- conftest.py
+|       |-- __init__.py
+|       `-- test_onboarding_steps.py
+`-- utils
+    |-- classes.py
+    `-- __init__.py
+```
+## Getting Started
 
-1. This repo is your own, you can use it to work and commit your solution here.
-2. Solve the exercise within a timeframe of 1 week. It normally takes around 3-6 hours to complete.
-3. We review your solution within 2 days, provide feedback for you and schedule a call to discuss as a next step.
-4. Demo your solution to future colleagues (product managers and engineers) on the call.
+#### Clone the repo
+```
+git clone git@github.com:choco-hire/QA-automation-exercise-AritraB.git
+```
 
-The app should contain the following features:
+#### Create vitual environment for the project
+```commandline
+virtualenv venv
+```
+#### Activate the virtual environment
+Windows
+```commandline
+venv\Scripts\activate
+```
+Linux
+```commandline
+source venv/bin/activate
+```
+#### Install requirements
 
-**MANUAL TESTING** 
+```commandline
+pip install -r requirements.txt
+```
+### Before Running the tests
+1. Start an android emulator with Android Platformversion 11.
+If any other emulator is used please change desired capabilities in devices/android/android_devices.py
+2. Start the appium server
 
-Take a look to our test Android Choco app
-[here](https://drive.google.com/file/d/19B6TMMfwhrX3sYpx76Gw9Yq0Zmax7O96/view?usp=sharing), and according of what you see please write test cases (using Gherkin syntax) all the features and scenarios you can think of.
+### Test Markers
+Two markers have been introduced.
+1. choco -> Run all the tests. For marking feature
+2. debug -> Run single or multiple tests. For Marking scenarios 
 
-**AUTOMATION TESTING** 
+#### Run tests
+To run tests do the following
+1. Go to project root directory
+2. Execute the runner.sh
 
-From the list of proposed test cases, implement a subset from your proposed list (Choose according your own prioritisation criteria).
+### runner.sh
+runner.sh takes three arguments.
+1. device type {android, ios}
+2. hub url ex: http://127.0.0.1:4723/wd/hub
+3. marker {choco, debug}
 
-Also imagine the scenario were you have to implement the same set of tests for the iOS app, so write the solution thinking of this parametrisation.
+to run runner.sh use either one of the methods
+chmod
+```
+chmod +x runner.sh
+./runner.sh android "http://127.0.0.1:4723/wd/hub" choco
+```
+or
 
-**Credentials:**
-
-**phone nunmber:** +4916200000001
-
-**daily code:** 1234
-
-**RULES**
-
-This task should be completed in **one week (7 days).**
-
-We have a preferred tech stack below to be used for the solution, but you can use any other tool you see fit and more familiar with. 
-- **Java** 
-- **Appium**
-- **Cucumber**
-
-In order to complete this test your app **must:**
-- Compile with no errors
-- Contain no crashes
-   
- We expect that a badass Chocorian will follow these criteria:
-- Architectural cleanliness / Patterns usage
-- Well documented README.md to be able to run your solution
+```
+bash runner.sh android "http://127.0.0.1:4723/wd/hub" choco
+```
