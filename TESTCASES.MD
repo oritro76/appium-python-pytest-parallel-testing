@@ -2,7 +2,7 @@
 Feature: onboard to CHOCO app
  
     Scenario: In android 6 phone, appp should install and run without any crashes 
-    Given I am have an android 6 phone
+    Given I have an android 6 phone
     Then I install the app and use the app without any crashes
     
     Scenario: In android latest os phone, appp should install and run without any crashes 
@@ -16,7 +16,7 @@ Background:
     Given I am on PhoneNumberInputActivity
     Then Check in PhoneNumberInputActivity has proper title, descriptoion title and default country code
     
-    Scenario: In OTPInputActivity title, description are showng 
+    Scenario: In OTPInputActivity title, description are showing 
     Given I am on OTPInputActivity
     Then Check in OTPInputActivity has proper title and description
 
