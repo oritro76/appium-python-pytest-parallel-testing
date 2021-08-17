@@ -1,18 +1,26 @@
 ```
 Feature: onboard to CHOCO app
-
-Automated
+ 
+    Scenario: In android 6 phone, appp should install and run without any crashes 
+    Given I am have an android 6 phone
+    Then I install the app and use the app without any crashes
+    
+    Scenario: In android latest os phone, appp should install and run without any crashes 
+    Given I am have an android latest os phone
+    Then I install the app and use the app without any crashes
+   
 Background:
     Given the choco app is opened in a mobile
     
+    Scenario: In PhoneNumberInputActivity title,  description, default country code are shown 
+    Given I am on PhoneNumberInputActivity
+    Then Check in PhoneNumberInputActivity has proper title, descriptoion title and default country code
+    
     Scenario: In OTPInputActivity title, description are showng 
     Given I am on OTPInputActivity
-    Then Check in OTPInputActivity has proper descriptoion title default country code
-  
-  Scenario: In PhoneNumberInputActivity title,  description, default country code are shown 
-    Given I am on PhoneNumberInputActivity
-    Then Check in PhoneNumberInputActivity has proper descriptoion title default country code
+    Then Check in OTPInputActivity has proper title and description
 
+  Automated  
   Scenario Outline: Onboard into choco app when valid text
     When I tap on country code
     And  enter <text> in search field to filter

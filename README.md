@@ -94,7 +94,7 @@ pip install -r requirements.txt
 ```
 ### Before Running the tests
 1. Start an android emulator with Android Platformversion 11.
-If any other emulator is used please change desired capabilities in devices/android/android_devices.py
+If any other Platformversion is used then change desired capabilities in devices/android/android_devices.py
 2. Start the appium server
 
 ### Test Markers
