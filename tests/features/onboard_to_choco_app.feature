@@ -21,7 +21,7 @@ Background:
       | germ        | germany    |
 
 
-  @debug
+
   Scenario: Onboard into choco app by entering phone number and then selecting country code
     When I enter valid phone number
     And tap on country code
@@ -32,7 +32,7 @@ Background:
     Then see the message "Welcome to Choco!!"
     And close the choco app
 
-  @debug
+
   Scenario: Onboard into choco app when mobile is in landscape
     Given mobile is in "landscape" orientation
     When I tap on country code
@@ -45,15 +45,13 @@ Background:
     And change mobile to "portrait" orientation
     And close the choco app
 
-   Scenario: Tapping on back button in OTP input activity will take user to phone number input activity
-    When I tap on country code
-    And enter valid country code in search field to filter
-    And tap on valid country from the filtered search result
-    And enter valid phone number
-    And tap on "Continue" button
-    And tap on back button in otp input activity
+
+    Scenario: Tapping on back button in OTP input activity will take user to phone number input activity
+    Given I am on OTPInputActivity
+    When I tap on back button in otp input activity
     Then am taken to phone number input activity
     And close the choco app
+
 
   Scenario Outline: Wrong country_code, wrong and invalid phone number input shows error message
     When I tap on country code
@@ -71,13 +69,10 @@ Background:
       | ba          | bahamas    | 1620000      | That phone number isn’t valid, are you sure you entered it correctly? |
       | ba          | cuba       | !!3adfzcv    | That phone number isn’t valid, are you sure you entered it correctly? |
 
+  @debug
   Scenario: After entering wrong OTP code shows error message and correcting it results successful onboard
-    When I tap on country code
-    And  enter valid country code in search field to filter
-    And tap on valid country from the filtered search result
-    And enter valid phone number
-    And tap on "Continue" button
-    And enter wrong OTP
+    Given I am on OTPInputActivity
+    When enter wrong OTP
     Then "Loading" text should be shown
     And error message "The code you entered was incorrect, are you sure you entered it correctly" is shown for wrong otp
     And enter valid OTP

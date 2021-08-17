@@ -16,6 +16,14 @@ from custom_excepitons.choco_app_exception import ButtonTextMismatchException
 def context():
     return {}
 
+@pytest.fixture(scope="function")
+def helper_tap_on_country_code(appium_driver):
+    def _helper_tap_on_country_code():
+        logger.info('Tapping on country code')
+        phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
+        phone_number_input_activity.tap(phone_number_input_activity.country_code_select)
+
+    return _helper_tap_on_country_code
 
 @pytest.fixture(scope='function')
 def helper_enter_text_to_filter_countries(appium_driver):
@@ -43,6 +51,31 @@ def helper_change_mobile_orientation(appium_driver):
         logger.info(f"Changing mobile orientation to {orientation}")
         appium_driver.change_device_orientation(orientation)
     return _helper_change_mobile_orientation
+
+@pytest.fixture(scope='function')
+def helper_enter_phone_number(appium_driver):
+
+    def _helper_enter_phone_number(phone_number):
+        logger.info(f'Entering valid phone number {phone_number}')
+        phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
+        phone_number_input_activity.enter_text(phone_number_input_activity.phone_number_input,
+                                               phone_number)
+    return _helper_enter_phone_number
+
+@pytest.fixture(scope='function')
+def helper_tap_on_button_in_phone_number_input_activity(appium_driver):
+    def _helper_tap_on_button_in_phone_number_input_activity(button_text):
+        phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
+        text = phone_number_input_activity.get_text(phone_number_input_activity.button)
+
+        phone_number_input_activity.tap(phone_number_input_activity.button)
+
+        assert_that(button_text).is_equal_to(text)
+
+        logger.info(f"Checking if current activity is OTP Input Activity")
+        otp_input_activity = OTPInputActivity(appium_driver.connect())
+        otp_input_activity.find_elements(otp_input_activity.otp_input)
+    return _helper_tap_on_button_in_phone_number_input_activity
 
 @pytest.fixture(scope='session')
 def appium_driver():
@@ -72,12 +105,30 @@ def close_app(appium_driver):
         raise
 
 
+@given("I am on OTPInputActivity", target_fixture="go_to_OTPInputActivity")
+def go_to_OTPInputActivity(helper_tap_on_country_code,
+                           helper_enter_text_to_filter_countries,
+                           helper_tap_on_country_from_filter_result,
+                           helper_enter_phone_number,
+                           helper_tap_on_button_in_phone_number_input_activity):
+    helper_tap_on_country_code()
+
+    country_calling_code = DataGenerator().get_valid_country_calling_code()[1:]
+    helper_enter_text_to_filter_countries(country_calling_code)
+
+    country = DataGenerator().get_valid_country()
+    helper_tap_on_country_from_filter_result(country)
+
+    phone_number = DataGenerator().get_valid_phone_number()
+    helper_enter_phone_number(phone_number)
+
+    helper_tap_on_button_in_phone_number_input_activity(PhoneNumberInputActivity.button_text)
+
+
 @when("I tap on country code", target_fixture="tap_on_country_code")
 @when("tap on country code", target_fixture="tap_on_country_code")
-def tap_on_country_code(appium_driver):
-    logger.info('Tapping on country code')
-    phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
-    phone_number_input_activity.tap(phone_number_input_activity.country_code_select)
+def tap_on_country_code(helper_tap_on_country_code):
+    helper_tap_on_country_code()
 
 
 @when("enter valid country code in search field to filter", target_fixture="enter_text_to_filter_countries")
@@ -96,29 +147,18 @@ def tap_on_country_from_filter_result(helper_tap_on_country_from_filter_result):
 
 @when("enter valid phone number", target_fixture="enter_phone_number")
 @when("I enter valid phone number", target_fixture="enter_phone_number")
-def enter_phone_number(appium_driver, context):
+def enter_phone_number(helper_enter_phone_number, context):
     context['phone_number'] = DataGenerator().get_valid_phone_number()
     phone_number = DataGenerator().get_valid_phone_number()
-    logger.info(f'Entering valid phone number {phone_number}')
-    phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
-    phone_number_input_activity.enter_text(phone_number_input_activity.phone_number_input, phone_number)
-
+    helper_enter_phone_number(appium_driver, phone_number)
 
 
 @when(parsers.parse('tap on "{button_text}" button'),
       target_fixture="tap_on_button_in_phone_number_input_activity")
-def tap_on_button_in_phone_number_input_activity(appium_driver, button_text):
-    phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
-    text = phone_number_input_activity.get_text(phone_number_input_activity.button)
+def tap_on_button_in_phone_number_input_activity(helper_tap_on_button_in_phone_number_input_activity,
+                                                 button_text):
+    helper_tap_on_button_in_phone_number_input_activity(button_text)
 
-    phone_number_input_activity.tap(phone_number_input_activity.button)
-
-
-    assert_that(button_text).is_equal_to(text)
-
-    logger.info(f"Checking if current activity is OTP Input Activity")
-    otp_input_activity = OTPInputActivity(appium_driver.connect())
-    otp_input_activity.find_elements(otp_input_activity.otp_input)
 
 
 @then(parsers.parse('enter valid OTP'), target_fixture="enter_otp")
