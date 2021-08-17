@@ -4,7 +4,7 @@
 Background:
     Given the choco app is opened in a mobile
 
-  Scenario Outline: Onboard into choco app when filtering with country calling code
+  Scenario Outline: Onboard into choco app when valid text
     When I tap on country code
     And  enter <text> in search field to filter
     And tap on <country> from the filtered search result
@@ -69,8 +69,7 @@ Background:
       | ba          | bahamas    | 1620000      | That phone number isn’t valid, are you sure you entered it correctly? |
       | ba          | cuba       | !!3adfzcv    | That phone number isn’t valid, are you sure you entered it correctly? |
 
-  @debug
-  Scenario: After entering wrong OTP code shows error message and correcting it results successful onboard
+  Scenario: Entering wrong OTP code show error message and correcting it results successful onboard
     Given I am on OTPInputActivity
     When enter wrong OTP
     Then "Loading" text should be shown
@@ -79,13 +78,13 @@ Background:
     And see the message "Welcome to Choco!!"
     And close the choco app
 
-  Scenario: From OTPInputActivity if mobile back button is pressed in PhoneNumberInputAcitivity default country code should be shown and phone input field should be cleared
-    When I tap on country code
-    And  enter valid country code in search field to filter
-    And tap on valid country from the filtered search result
-    And enter valid phone number
-    And tap on "Continue" button
-    And tap on mobile back button
-    Then in PhoneNumberInputActivity default country code should be shown
-    And button should be enabled
-    And phone input field should be cleared
+  Scenario: From OTPInputActivity back button press
+    Given I am on OTPInputActivity
+    When tap on mobile back button
+    Then in PhoneNumberInputActivity default country code "+1" should be shown
+    And "Continue" button should be enabled
+    And phone number input field should be cleared
+
+  Scenario: In OTPInputActivity description phone number where otp was sent is shown
+    Given I am on OTPInputActivity
+    Then My phone number should show in the activity in the description

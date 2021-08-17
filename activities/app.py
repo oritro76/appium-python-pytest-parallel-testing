@@ -64,3 +64,10 @@ class App:
     def is_element_enabled(self, locator):
         return self.find_element(locator).is_enabled()
 
+    def press_android_back_button(self):
+        self.driver.back()
+
+    def get_value_of_edit_text_widget(self, locator):
+        self.find_element(locator).get_attribute('value')
+
+

@@ -4,9 +4,116 @@ from loguru import logger
 
 from activities.phone_number_input_activity import PhoneNumberInputActivity
 from activities.otp_input_activity import OTPInputActivity
+from activities.onboard_success_activity import OnboardSuccessActivity
 from data.data_gen import DataGenerator
+from custom_excepitons.appium_exceptions import AppiumConnectionFailException
 
 scenarios('../features/onboard_to_choco_app.feature',)
+
+
+@given("the choco app is opened in a mobile", target_fixture="open_app")
+def open_app(appium_driver):
+    try:
+        logger.info('Connecting to appium server and opening the app')
+        appium_driver.connect()
+    except AppiumConnectionFailException as e:
+        logger.critical(e)
+        raise
+
+
+@then('close the choco app', target_fixture='close_app')
+def close_app(appium_driver):
+    try:
+        logger.info('Closing the app')
+        appium_driver.close_app()
+    except Exception as e:
+        logger.critical(e)
+        raise
+
+
+@given("I am on OTPInputActivity", target_fixture="go_to_OTPInputActivity")
+def go_to_OTPInputActivity(helper_tap_on_country_code,
+                           helper_enter_text_to_filter_countries,
+                           helper_tap_on_country_from_filter_result,
+                           helper_enter_phone_number,
+                           helper_tap_on_button_in_phone_number_input_activity,
+                           context):
+    helper_tap_on_country_code()
+
+    context['country_code'] = DataGenerator().get_valid_country_calling_code()
+    country_calling_code = DataGenerator().get_valid_country_calling_code()[1:]
+    helper_enter_text_to_filter_countries(country_calling_code)
+
+    country = DataGenerator().get_valid_country()
+    helper_tap_on_country_from_filter_result(country)
+
+    context['phone_number'] = phone_number = DataGenerator().get_valid_phone_number()
+    helper_enter_phone_number(phone_number)
+
+    helper_tap_on_button_in_phone_number_input_activity(PhoneNumberInputActivity.button_text)
+
+
+@when("I tap on country code", target_fixture="tap_on_country_code")
+@when("tap on country code", target_fixture="tap_on_country_code")
+def tap_on_country_code(helper_tap_on_country_code):
+    helper_tap_on_country_code()
+
+
+@when("enter valid country code in search field to filter", target_fixture="enter_text_to_filter_countries")
+def enter_text_to_filter_countries(context, helper_enter_text_to_filter_countries):
+    context['country_code'] = DataGenerator().get_valid_country_calling_code()
+    country_calling_code = DataGenerator().get_valid_country_calling_code()[1:]
+    helper_enter_text_to_filter_countries(country_calling_code)
+
+
+@when('tap on valid country from the filtered search result',
+      target_fixture="tap_on_country_from_filter_result")
+def tap_on_country_from_filter_result(helper_tap_on_country_from_filter_result):
+    country = DataGenerator().get_valid_country()
+    helper_tap_on_country_from_filter_result(country)
+
+
+@when("enter valid phone number", target_fixture="enter_phone_number")
+@when("I enter valid phone number", target_fixture="enter_phone_number")
+def enter_phone_number(helper_enter_phone_number, context):
+    context['phone_number'] = DataGenerator().get_valid_phone_number()
+    phone_number = DataGenerator().get_valid_phone_number()
+    helper_enter_phone_number(phone_number)
+
+
+@when(parsers.parse('tap on "{button_text}" button'),
+      target_fixture="tap_on_button_in_phone_number_input_activity")
+def tap_on_button_in_phone_number_input_activity(helper_tap_on_button_in_phone_number_input_activity,
+                                                 button_text):
+    helper_tap_on_button_in_phone_number_input_activity(button_text)
+
+
+@then(parsers.parse('enter valid OTP'), target_fixture="enter_otp")
+@when(parsers.parse('enter valid OTP'), target_fixture="enter_otp")
+def enter_otp(appium_driver, helper_enter_otp):
+    otp = DataGenerator().get_valid_otp()
+
+    helper_enter_otp(otp)
+
+    logger.info(f"Checking if current activity is Onboard Success Activity")
+    onboard_success_activity = OnboardSuccessActivity(appium_driver.connect())
+
+    onboard_success_activity.find_element(onboard_success_activity.title)
+
+
+@then(parsers.parse('see the message "{message}"'),
+      target_fixture="check_correct_message_is_shown_in_onboard_success_activity")
+def check_correct_message_is_shown_in_onboard_success_activity(appium_driver, message):
+    onboard_success_activity = OnboardSuccessActivity(appium_driver.connect())
+
+    element_text = onboard_success_activity.get_text(onboard_success_activity.title)
+    logger.info(f"Checking if correct message {message} and  {message} are same")
+
+    try:
+        assert_that(element_text).is_equal_to(message)
+    except AssertionError as e:
+        logger.critical(e)
+        raise
 
 
 @given(parsers.parse('mobile is in "{orientation}" orientation'),
@@ -75,15 +182,22 @@ def check_correct_error_message_is_shown_for_wrong_country_code_wrong_phone_numb
                                                                                    err_text):
     phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
 
-    logger.info(f"Asserting for correct error message {err_text} after entering wrong phone number ")
-    error_text = phone_number_input_activity.get_text(phone_number_input_activity.error_indicator)
+    logger.info(f"expected error message {err_text}")
+    text = phone_number_input_activity.get_text(phone_number_input_activity.error_indicator)
+    logger.info(f"error message {text} after entering wrong phone number ")
+    
+    try:
+        assert_that(text).contains(err_text)
+    except AssertionError as e:
+        logger.critical(e)
+        raise 
 
-    assert_that(error_text).contains(err_text)
 
 @when('enter wrong OTP', target_fixture="enter_wrong_otp")
 def enter_wrong_otp(helper_enter_otp):
     otp = DataGenerator().get_random_otp()
     helper_enter_otp(otp)
+
 
 @then(parsers.parse('"{loading_text}" text should be shown'),
       target_fixture="check_loading_text_is_shown")
@@ -93,7 +207,12 @@ def check_loading_text_is_shown(appium_driver, loading_text):
     logger.info(f"Checking for loading text {loading_text} after entering otp")
     text = otp_input_activity.get_text(otp_input_activity.loading)
 
-    assert_that(text).contains(loading_text)
+    logger.info(f"Loading text {loading_text}")
+    try:
+        assert_that(text).contains(loading_text)
+    except AssertionError as e:
+        logger.critical(e)
+        raise 
 
 
 @then(parsers.parse('error message "{err_text}" is shown for wrong otp'),
@@ -103,5 +222,79 @@ def check_correct_error_message_is_shown_for_wrong_otp(appium_driver, err_text):
 
     logger.info(f"Checking for correct error message {err_text} after entering wrong otp")
     error_text = otp_input_activity.get_text(otp_input_activity.error_indicator)
+    try:
+        assert_that(error_text).contains(err_text)
+    except AssertionError as e:
+        logger.critical(e)
+        raise 
 
-    assert_that(error_text).contains(err_text)
+
+@when("tap on mobile back button", target_fixture="press_android_back_button")
+def press_android_back_button(appium_driver):
+    otp_input_activitty = OTPInputActivity(appium_driver.connect())
+    otp_input_activitty.press_android_back_button()
+
+
+@then(parsers.parse('in PhoneNumberInputActivity default country code "{default_country_code}" should be shown'),
+      target_fixture='check_phone_number_input_default_country_code')
+def check_phone_number_input_default_country_code(appium_driver, default_country_code):
+    phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
+
+    logger.info(f"Checking if default {default_country_code} is shown")
+    country_code = phone_number_input_activity.get_text(phone_number_input_activity.country_code_select)
+    logger.info(f"default country code text {country_code}")
+    try:
+        assert_that(country_code).is_equal_to(default_country_code)
+    except AssertionError as e:
+        logger.critical(e)
+        raise 
+
+
+@then(parsers.parse('"{button_text}" button should be enabled'),
+      target_fixture='check_button_is_enabled')
+def check_button_is_enabled(appium_driver, button_text):
+    phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
+
+    logger.info(f"Checking if {button_text} button is enable")
+
+    is_enabled = phone_number_input_activity.is_element_enabled(phone_number_input_activity.button)
+    logger.info(f"{button_text} button's current status {is_enabled}")
+    try:
+        assert_that(is_enabled).is_true()
+    except AssertionError as e:
+        logger.critical(e)
+        raise 
+
+
+@then('phone number input field should be cleared',
+      target_fixture='check_phone_number_input_field_cleared')
+def check_phone_number_input_field_cleared(appium_driver):
+    phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
+
+    logger.info(f"Checking if phone_number input field is cleared")
+
+    text = phone_number_input_activity.get_text(phone_number_input_activity.phone_number_input)
+    logger.info(f"value of phone number input field {text}")
+    
+    try:
+        assert_that(text).is_equal_to("")
+    except AssertionError as e:
+        logger.critical(e)
+        raise
+
+
+@then(parsers.parse('My phone number should show in the activity in the description'),
+      target_fixture='check_phone_number_is_shown_where_otp_was_sent')
+def check_phone_number_is_shown_where_otp_was_sent(appium_driver, context):
+    otp_input_activity = OTPInputActivity(appium_driver.connect())
+
+    phone_number = context['country_code'] + context['phone_number']
+    text = otp_input_activity.get_text(otp_input_activity.description)
+    logger.info(f"My phone nunber {phone_number}")
+    logger.info(f"OTPInputActivity descriptin {text}")
+    
+    try:
+        assert_that(text).contains(phone_number)
+    except AssertionError as e:
+        logger.critical(e)
+        raise
