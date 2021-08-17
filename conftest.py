@@ -54,6 +54,7 @@ def pytest_bdd_before_scenario(request, feature, scenario):
 def pytest_bdd_after_scenario(request, feature, scenario):
     appium_driver = AppiumDriver()
 
+    logger.info('printing adb log')
     try:
         logcat_logs = appium_driver.get_logcat_logs()
         for log in logcat_logs:
@@ -77,6 +78,8 @@ def pytest_bdd_after_step(request, feature, scenario, step, step_func, step_func
 def pytest_bdd_step_error(request, feature, scenario, step, step_func, step_func_args, exception):
     appium_driver = AppiumDriver()
 
+    logger.info(f"{request.node.name} error happened")
+    logger.info("Taking screenshot")
     try:
         appium_driver.save_screenshot(scenario.name)
 
@@ -86,5 +89,5 @@ def pytest_bdd_step_error(request, feature, scenario, step, step_func, step_func
     except Exception as e:
         logger.exception(e)
 
-    logger.info(f"{request.node.name} error happened")
+
 
