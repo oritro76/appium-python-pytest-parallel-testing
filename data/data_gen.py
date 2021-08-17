@@ -8,6 +8,7 @@ class DataGenerator:
     def __init__(self):
         self.fake = Faker()
 
+
     def get_valid_country(self):
         return VALID_COUNTRY
 

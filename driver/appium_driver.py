@@ -5,7 +5,6 @@ import io
 
 from PIL import Image
 from appium import webdriver
-import pytest
 from loguru import logger
 
 from devices.android.android_devices import android_desired_caps
