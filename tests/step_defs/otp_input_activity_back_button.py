@@ -6,7 +6,7 @@ from activities.phone_number_input_activity import PhoneNumberInputActivity
 from activities.otp_input_activity import OTPInputActivity
 
 
-scenarios('../features/otp_input_activity_back_button.feature')
+#scenarios('../features/otp_input_activity_back_button.feature')
 
 
 

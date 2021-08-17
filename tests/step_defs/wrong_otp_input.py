@@ -3,7 +3,6 @@ from assertpy import assert_that
 
 from loguru import logger
 from data.data_gen import DataGenerator
-from activities.otp_input_activity import OTPInputActivity
 
 
 scenarios('../features/wrong_otp_input.feature')

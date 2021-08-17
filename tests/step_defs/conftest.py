@@ -16,6 +16,34 @@ from custom_excepitons.choco_app_exception import ButtonTextMismatchException
 def context():
     return {}
 
+
+@pytest.fixture(scope='function')
+def helper_enter_text_to_filter_countries(appium_driver):
+    def _helper_enter_text_to_filter_countries(text):
+        logger.info(f'Entering {text} to filter')
+        phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
+        phone_number_input_activity.enter_text(phone_number_input_activity.country_code_filter_input,
+                                               text)
+    return _helper_enter_text_to_filter_countries
+
+
+@pytest.fixture(scope='function')
+def helper_tap_on_country_from_filter_result(appium_driver):
+    def _helper_tap_on_country_from_filter_result(country):
+        logger.info(f'Entering valid country {country} to filter')
+        phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
+        phone_number_input_activity.tap_on_filtered_result_on_basis_of_country(country=country)
+
+    return _helper_tap_on_country_from_filter_result
+
+@pytest.fixture(scope='function')
+def helper_change_mobile_orientation(appium_driver):
+    def _helper_change_mobile_orientation(orientation):
+        appium_driver.connect()
+        logger.info(f"Changing mobile orientation to {orientation}")
+        appium_driver.change_device_orientation(orientation)
+    return _helper_change_mobile_orientation
+
 @pytest.fixture(scope='session')
 def appium_driver():
     appium_driver = AppiumDriver()
@@ -53,22 +81,17 @@ def tap_on_country_code(appium_driver):
 
 
 @when("enter valid country code in search field to filter", target_fixture="enter_text_to_filter_countries")
-def enter_text_to_filter_countries(appium_driver, context):
+def enter_text_to_filter_countries(context, helper_enter_text_to_filter_countries):
     context['country_code'] = DataGenerator().get_valid_country_calling_code()
     country_calling_code = DataGenerator().get_valid_country_calling_code()[1:]
-    logger.info(f'Entering valid country code {country_calling_code} to filter')
-    phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
-    phone_number_input_activity.enter_text(phone_number_input_activity.country_code_filter_input,
-                                           country_calling_code)
+    helper_enter_text_to_filter_countries(country_calling_code)
 
 
 @when('tap on valid country from the filtered search result',
       target_fixture="tap_on_country_from_filter_result")
-def tap_on_country_from_filter_result(appium_driver):
+def tap_on_country_from_filter_result(helper_tap_on_country_from_filter_result):
     country = DataGenerator().get_valid_country()
-    logger.info(f'Entering valid country {country} to filter')
-    phone_number_input_activity = PhoneNumberInputActivity(appium_driver.connect())
-    phone_number_input_activity.tap_on_filtered_result_on_basis_of_country(country=country)
+    helper_tap_on_country_from_filter_result(country)
 
 
 @when("enter valid phone number", target_fixture="enter_phone_number")
@@ -115,7 +138,7 @@ def enter_otp(appium_driver):
     onboard_success_activity.find_element(onboard_success_activity.title)
 
 
-@then(parsers.parse('am taken to success activity and shown the message "{message}"'),
+@then(parsers.parse('see the message "{message}"'),
       target_fixture="check_correct_message_is_shown_in_onboard_success_activity")
 def check_correct_message_is_shown_in_onboard_success_activity(appium_driver, message):
     onboard_success_activity = OnboardSuccessActivity(appium_driver.connect())

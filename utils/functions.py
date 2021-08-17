@@ -1,5 +1,5 @@
 import functools
-from conf.conf import logger_test
+from loguru import logger
 
 def exceptions_handler(func):
     @functools.wraps(func)
@@ -7,6 +7,7 @@ def exceptions_handler(func):
         try:
             return func(*args, **kwargs)
         except AttributeError as e:
-            logger_test.exception(e)
+            logger.exception(e)
 
     return inner_func
+
