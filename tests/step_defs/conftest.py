@@ -9,7 +9,6 @@ from activities.phone_number_input_activity import PhoneNumberInputActivity
 from activities.otp_input_activity import OTPInputActivity
 from activities.onboard_success_activity import OnboardSuccessActivity
 from custom_excepitons.appium_exceptions import AppiumConnectionFailException
-from custom_excepitons.choco_app_exception import ButtonTextMismatchException
 
 
 @pytest.fixture(scope='function')
@@ -76,6 +75,14 @@ def helper_tap_on_button_in_phone_number_input_activity(appium_driver):
         otp_input_activity = OTPInputActivity(appium_driver.connect())
         otp_input_activity.find_elements(otp_input_activity.otp_input)
     return _helper_tap_on_button_in_phone_number_input_activity
+
+@pytest.fixture(scope='function')
+def helper_enter_otp(appium_driver):
+    def _helper_enter_otp(otp):
+        otp_input_activity = OTPInputActivity(appium_driver.connect())
+        logger.info(f"Entering otp {otp}")
+        otp_input_activity.enter_otp(otp=otp)
+    return _helper_enter_otp
 
 @pytest.fixture(scope='session')
 def appium_driver():
@@ -163,14 +170,10 @@ def tap_on_button_in_phone_number_input_activity(helper_tap_on_button_in_phone_n
 
 @then(parsers.parse('enter valid OTP'), target_fixture="enter_otp")
 @when(parsers.parse('enter valid OTP'), target_fixture="enter_otp")
-def enter_otp(appium_driver):
+def enter_otp(appium_driver, helper_enter_otp):
     otp = DataGenerator().get_valid_otp()
 
-    otp_input_activity = OTPInputActivity(appium_driver.connect())
-
-    logger.info(f"Entering otp {otp}")
-
-    otp_input_activity.enter_otp(otp=otp)
+    helper_enter_otp(otp)
 
     logger.info(f"Checking if current activity is Onboard Success Activity")
     onboard_success_activity = OnboardSuccessActivity(appium_driver.connect())
