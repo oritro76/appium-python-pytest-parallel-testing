@@ -1,4 +1,4 @@
-@endtoend
+@choco
   Feature: onboard to CHOCO app
 
 Background:
