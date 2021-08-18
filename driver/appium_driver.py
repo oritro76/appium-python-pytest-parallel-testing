@@ -6,19 +6,27 @@ import io
 from PIL import Image
 from appium import webdriver
 from loguru import logger
-
+from appium.webdriver.common.touch_action import TouchAction
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException, \
+                                       StaleElementReferenceException, \
+                                       TimeoutException
 from devices.android.android_devices import android_desired_caps
 from devices.ios.ios_devices import ios_desired_caps
 from conf.conf import SCREENSHOT_PATH
-from custom_excepitons.appium_exceptions import AppiumConnectionFailException
+from custom_excepitons.appium_exceptions import AppiumConnectionFailException, InvalidDeviceTypeException
 from custom_excepitons.env_variable_exceptions import EnvVariableNotSetException
 from utils.classes import SingletonMeta
+
+from conf.conf import TIMEOUT_FIND_LOCATOR
 
 
 class AppiumDriver(metaclass=SingletonMeta):
     connection = None
     ANDROID = 'android'
     IOS = 'ios'
+    desired_caps = None
 
     if "DEVICE_TYPE" not in os.environ:
         logger.critical(f"Env variable 'device_type' is not set")
@@ -34,13 +42,22 @@ class AppiumDriver(metaclass=SingletonMeta):
     hub_url = os.getenv('HUB_URL')
     logger.info(f'appium server url is {hub_url}')
 
+    def set_device_capabilities(self, device):
+        if self.device_type.lower() == self.ANDROID:
+            self.desired_caps = android_desired_caps[device]
+        elif self.device_type.lower() == self.IOS:
+            self.desired_caps = ios_desired_caps
+        else:
+            logger.critical(f"Invalid device type provided")
+            raise InvalidDeviceTypeException("Invalid device type provided")
+
     def connect(self):
 
         if self.connection is None:
             if self.device_type.lower() == self.ANDROID:
                 try:
                     self.connection = webdriver.Remote(command_executor=self.hub_url,
-                                                       desired_capabilities=android_desired_caps)
+                                                       desired_capabilities=self.desired_caps)
                 except Exception as e:
                     logger.exception(e)
                     raise AppiumConnectionFailException('Could not connect to appium server. '
@@ -50,12 +67,72 @@ class AppiumDriver(metaclass=SingletonMeta):
             else:
                 try:
                     self.connection = webdriver.Remote(command_executor=self.hub_url,
-                                                   desired_capabilities=ios_desired_caps)
+                                                   desired_capabilities=self.desired_caps)
                 except Exception as e:
                     raise AppiumConnectionFailException('Could not connect to appium server. '
                                                           'Please check if '
                                                           'appium server is running')
         return self.connection
+
+    def find_element(self, locator, timeout=TIMEOUT_FIND_LOCATOR):
+        ignored_exceptions = (NoSuchElementException, StaleElementReferenceException,)
+        wait = WebDriverWait(driver=self.connection,
+                             timeout=int(timeout),
+                             ignored_exceptions=ignored_exceptions)
+
+        try:
+            return wait.until(EC.visibility_of_element_located(locator))
+
+        except Exception as e:
+            logger.critical("Could not locate element with value: %s" % str(locator))
+            raise NoSuchElementException("Could not locate element with value: %s" % str(locator))
+
+    def find_elements(self, locator, timeout=TIMEOUT_FIND_LOCATOR):
+        ignored_exceptions = (NoSuchElementException, StaleElementReferenceException,)
+        wait = WebDriverWait(driver=self.connection, timeout=int(timeout), ignored_exceptions=ignored_exceptions)
+        try:
+            return wait.until(EC.visibility_of_all_elements_located(locator))
+        except TimeoutException as e:
+            logger.critical("Could not locate element with value: %s" % str(locator))
+            raise NoSuchElementException("Could not locate element with value: %s" % str(locator))
+
+    def tap(self, locator):
+        element = self.find_element(locator)
+        actions = TouchAction(self.connection)
+        actions.tap(element)
+        actions.perform()
+
+    def enter_text(self, locator, text):
+        self.find_element(locator).clear().send_keys(text)
+
+    def click(self, locator):
+        self.find_element(locator).click()
+
+    def get_current_activity(self):
+        return self.connection.current_activity
+
+    def send_keys_to_multiple_inputs(self, locator, text):
+        edit_texts = self.find_elements(locator)
+        limit = len(edit_texts)
+
+        for index in range(limit):
+            edit_texts[index].clear().send_keys(text[index])
+
+    def get_text(self, locator):
+        el = self.find_element(locator)
+        return el.text
+
+    def is_element_displayed(self, locator):
+        return self.find_element(locator).is_displayed()
+
+    def is_element_enabled(self, locator):
+        return self.find_element(locator).is_enabled()
+
+    def press_android_back_button(self):
+        self.connection.back()
+
+    def get_value_of_edit_text_widget(self, locator):
+        self.find_element(locator).get_attribute('value')
 
     def get_log_type(self):
         return self.connection.log_types
@@ -104,3 +181,17 @@ class AppiumDriver(metaclass=SingletonMeta):
         image = base64.b64decode(str(screenshot_base64))
         img = Image.open(io.BytesIO(image))
         img.save(filepath, 'png')
+
+    def enter_otp(self, locator, otp):
+        self.send_keys_to_multiple_inputs(locator=locator, text=otp)
+
+    def tap_on_filtered_result_on_basis_of_country(self, locator, country):
+        filtered_results = self.find_elements(locator)
+        limit = len(filtered_results)
+
+        for temp in range(limit):
+            if country.lower() == filtered_results[temp].text.lower():
+                filtered_results[temp].click()
+                return
+
+

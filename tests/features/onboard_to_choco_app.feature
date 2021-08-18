@@ -4,7 +4,7 @@
 Background:
     Given the choco app is opened in a mobile
 
-  Scenario Outline: Onboard into choco app when valid text
+  Scenario Outline: Onboard into choco app when valid text is entered for country code filtering
     When I tap on country code
     And  enter <text> in search field to filter
     And tap on <country> from the filtered search result
@@ -21,7 +21,7 @@ Background:
       | germ        | germany    |
 
 
-
+  @debug
   Scenario: Onboard into choco app by entering phone number and then selecting country code
     When I enter valid phone number
     And tap on country code
@@ -31,7 +31,6 @@ Background:
     And enter valid OTP
     Then see the message "Welcome to Choco!!"
     And close the choco app
-
 
   Scenario: Onboard into choco app when mobile is in landscape
     Given mobile is in "landscape" orientation
