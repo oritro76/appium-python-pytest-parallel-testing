@@ -1,9 +1,7 @@
 from appium.webdriver.common.mobileby import MobileBy
 
-from activities.app import App
 
-
-class OTPInputActivity():
+class OTPInputActivity:
 
     back_button = (MobileBy.CLASS_NAME, 'android.widget.ImageButton')
     title = (MobileBy.ID, 'app.choco.dummyqa:id/title')

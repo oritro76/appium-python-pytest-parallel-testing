@@ -1,9 +1,7 @@
 from appium.webdriver.common.mobileby import MobileBy
 
-from activities.app import App
 
-
-class PhoneNumberInputActivity():
+class PhoneNumberInputActivity:
     """
     phone number input activity locators
     """

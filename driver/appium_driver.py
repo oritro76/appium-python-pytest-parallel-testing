@@ -12,17 +12,18 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, \
                                        StaleElementReferenceException, \
                                        TimeoutException
+
 from devices.android.android_devices import android_desired_caps
 from devices.ios.ios_devices import ios_desired_caps
 from conf.conf import SCREENSHOT_PATH
 from custom_excepitons.appium_exceptions import AppiumConnectionFailException, InvalidDeviceTypeException
 from custom_excepitons.env_variable_exceptions import EnvVariableNotSetException
-from utils.classes import SingletonMeta
+
 
 from conf.conf import TIMEOUT_FIND_LOCATOR
 
 
-class AppiumDriver(metaclass=SingletonMeta):
+class AppiumDriver():
     connection = None
     ANDROID = 'android'
     IOS = 'ios'
@@ -42,35 +43,27 @@ class AppiumDriver(metaclass=SingletonMeta):
     hub_url = os.getenv('HUB_URL')
     logger.info(f'appium server url is {hub_url}')
 
-
     def connect(self, device):
-
         if self.connection is None:
             if self.device_type.lower() == self.ANDROID:
-                try:
-                    self.desired_caps = android_desired_caps[device]
-                    self.connection = webdriver.Remote(command_executor=self.hub_url,
-                                                       desired_capabilities=self.desired_caps)
-                except Exception as e:
-                    logger.exception(e)
-                    raise AppiumConnectionFailException('Could not connect to appium server. '
-                                                          'Please check if '
-                                                          'appium server is running')
-
+                self.desired_caps = android_desired_caps[device]
             elif self.device_type.lower() == self.IOS:
-                try:
                     self.desired_caps = ios_desired_caps
-                    self.connection = webdriver.Remote(command_executor=self.hub_url,
-                                                   desired_capabilities=self.desired_caps)
-                except Exception as e:
-                    raise AppiumConnectionFailException('Could not connect to appium server. '
-                                                          'Please check if '
-                                                          'appium server is running')
             else:
                 logger.critical(f"Invalid device type provided")
                 raise InvalidDeviceTypeException("Invalid device type provided")
 
-        return self.connection
+        try:
+            self.connection = webdriver.Remote(command_executor=self.hub_url,
+                                               desired_capabilities=self.desired_caps)
+            return self.connection
+        except Exception as e:
+            logger.exception(e)
+            raise AppiumConnectionFailException('Could not connect to appium server. '
+                                                'Please check if '
+                                                'appium server is running')
+
+
 
     def find_element(self, locator, timeout=TIMEOUT_FIND_LOCATOR):
         ignored_exceptions = (NoSuchElementException, StaleElementReferenceException,)

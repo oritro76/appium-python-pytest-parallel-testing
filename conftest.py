@@ -8,6 +8,16 @@ from driver.appium_driver import AppiumDriver
 from conf.conf import TESTS_LOG_DIR_PATH
 
 
+@pytest.fixture(scope='module', params=['device1', 'device2'])
+def appium_driver(request):
+    appium_driver = AppiumDriver()
+    appium_driver.connect(request.param)
+    yield appium_driver
+
+    logger.info('Quiting Appium server connection')
+    appium_driver.quit()
+
+
 @pytest.fixture
 def caplog(_caplog):
     class PropogateHandler(logging.Handler):

@@ -98,19 +98,12 @@ def helper_enter_otp(appium_driver):
     return _helper_enter_otp
 
 
-@pytest.fixture(scope='session')
-def appium_driver(request):
-    appium_driver = AppiumDriver()
 
-    yield appium_driver
-    logger.info('Quiting Appium server connection')
-    appium_driver.quit()
 
 @given("the choco app is opened in a mobile", target_fixture="open_app")
 def open_app(appium_driver):
     try:
         logger.info('Connecting to appium server and opening the app')
-        appium_driver.connect("device1")
     except AppiumConnectionFailException as e:
         logger.critical(e)
         raise
