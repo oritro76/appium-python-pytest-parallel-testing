@@ -42,20 +42,13 @@ class AppiumDriver(metaclass=SingletonMeta):
     hub_url = os.getenv('HUB_URL')
     logger.info(f'appium server url is {hub_url}')
 
-    def set_device_capabilities(self, device):
-        if self.device_type.lower() == self.ANDROID:
-            self.desired_caps = android_desired_caps[device]
-        elif self.device_type.lower() == self.IOS:
-            self.desired_caps = ios_desired_caps
-        else:
-            logger.critical(f"Invalid device type provided")
-            raise InvalidDeviceTypeException("Invalid device type provided")
 
-    def connect(self):
+    def connect(self, device):
 
         if self.connection is None:
             if self.device_type.lower() == self.ANDROID:
                 try:
+                    self.desired_caps = android_desired_caps[device]
                     self.connection = webdriver.Remote(command_executor=self.hub_url,
                                                        desired_capabilities=self.desired_caps)
                 except Exception as e:
@@ -64,14 +57,19 @@ class AppiumDriver(metaclass=SingletonMeta):
                                                           'Please check if '
                                                           'appium server is running')
 
-            else:
+            elif self.device_type.lower() == self.IOS:
                 try:
+                    self.desired_caps = ios_desired_caps
                     self.connection = webdriver.Remote(command_executor=self.hub_url,
                                                    desired_capabilities=self.desired_caps)
                 except Exception as e:
                     raise AppiumConnectionFailException('Could not connect to appium server. '
                                                           'Please check if '
                                                           'appium server is running')
+            else:
+                logger.critical(f"Invalid device type provided")
+                raise InvalidDeviceTypeException("Invalid device type provided")
+
         return self.connection
 
     def find_element(self, locator, timeout=TIMEOUT_FIND_LOCATOR):

@@ -3,7 +3,7 @@
 
 Background:
     Given the choco app is opened in a mobile
-
+  @debug
   Scenario Outline: Onboard into choco app when valid text is entered for country code filtering
     When I tap on country code
     And  enter <text> in search field to filter
@@ -21,7 +21,7 @@ Background:
       | germ        | germany    |
 
 
-  @debug
+
   Scenario: Onboard into choco app by entering phone number and then selecting country code
     When I enter valid phone number
     And tap on country code
@@ -51,7 +51,7 @@ Background:
     Then am taken to phone number input activity
     And close the choco app
 
-
+  @debug
   Scenario Outline: Wrong country_code, wrong and invalid phone number input shows error message
     When I tap on country code
     And  enter <text> in search field to filter
@@ -77,12 +77,14 @@ Background:
     And see the message "Welcome to Choco!!"
     And close the choco app
 
+
   Scenario: From OTPInputActivity back button press
     Given I am on OTPInputActivity
     When tap on mobile back button
     Then in PhoneNumberInputActivity default country code "+1" should be shown
     And "Continue" button should be enabled
     And phone number input field should be cleared
+
 
   Scenario: In OTPInputActivity description phone number where otp was sent is shown
     Given I am on OTPInputActivity
