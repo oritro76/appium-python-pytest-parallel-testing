@@ -2,6 +2,7 @@ from pytest_bdd import scenario, when, then
 from loguru import logger
 
 from activities.otp_input_activity import OTPInputActivity
+from activities.phone_number_input_activity import PhoneNumberInputActivity
 
 
 @scenario('../features/onboard_to_choco_app.feature', 'Tapping on back button in OTP input activity will take user to phone number input activity')
