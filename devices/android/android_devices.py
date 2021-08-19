@@ -12,9 +12,9 @@ android_desired_caps = {"device1": {
                         "device2": {
                                         "platformName": "Android",
                                         "platformVersion": "10",
-                                        "deviceName": "realme 3 pro",
+                                        "deviceName": "Android Emulator",
                                         "automationName": "UiAutomator2",
-                                        "udid": "c3dbca28",
+                                        "udid": "emulator-5556",
                                         "systemPort": 8205,
                                         **android_common_desired_caps
                                 }

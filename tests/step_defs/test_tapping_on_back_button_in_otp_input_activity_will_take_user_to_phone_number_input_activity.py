@@ -1,11 +1,15 @@
 from pytest_bdd import scenario, when, then
 from loguru import logger
+from selenium.common.exceptions import (
+    NoSuchElementException,
+)
 
 from activities.otp_input_activity import OTPInputActivity
 from activities.phone_number_input_activity import PhoneNumberInputActivity
 
 
-@scenario('../features/onboard_to_choco_app.feature', 'Tapping on back button in OTP input activity will take user to phone number input activity')
+@scenario('../features/onboard_to_choco_app.feature',
+          'Tapping on back button in OTP input activity will take user to phone number input activity')
 def test_tapping_on_back_button_in_otp_input_activity_will_take_user_to_phone_number_input_activity(appium_driver):
     """Tapping on back button in OTP input activity will take user to phone number input activity."""
 
@@ -23,5 +27,10 @@ def tap_on_back_button_otp_input_activity(appium_driver):
       target_fixture="check_currenct_activity_is_phone_number_input_activity")
 def check_current_activity_is_phone_number_input_activity(appium_driver):
     logger.info(f"Checking if current activity is Phone Number Input Activity")
-    phone_number_input_activity = PhoneNumberInputActivity()
-    appium_driver.find_element(phone_number_input_activity.phone_number_input)
+    try:
+        phone_number_input_activity = PhoneNumberInputActivity()
+        appium_driver.find_element(phone_number_input_activity.phone_number_input)
+    except NoSuchElementException as e:
+        message = f"Expected activity to be {phone_number_input_activity} but found {OTPInputActivity()}"
+        logger.critical(message)
+        raise AssertionError(message)

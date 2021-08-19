@@ -2,13 +2,15 @@ import pytest
 from loguru import logger
 from assertpy import assert_that
 from pytest_bdd import given, when, then, parsers
+from selenium.common.exceptions import (
+    NoSuchElementException,
+)
 
-from driver.appium_driver import AppiumDriver
 from activities.phone_number_input_activity import PhoneNumberInputActivity
 from activities.otp_input_activity import OTPInputActivity
 from activities.onboard_success_activity import OnboardSuccessActivity
 from data.data_gen import DataGenerator
-from custom_excepitons.appium_exceptions import AppiumConnectionFailException
+
 
 
 @pytest.fixture(scope='function')
@@ -98,15 +100,22 @@ def helper_enter_otp(appium_driver):
     return _helper_enter_otp
 
 
-
-
 @given("the choco app is opened in a mobile", target_fixture="open_app")
 def open_app(appium_driver):
     try:
-        logger.info('Connecting to appium server and opening the app')
-    except AppiumConnectionFailException as e:
+        logger.info('Checking app state')
+        state = appium_driver.get_app_state()
+        if state == 0:
+            logger.info('App is not in installed. installing it')
+            appium_driver.install_app()
+        elif state == 1 or state == 2 or state ==3:
+            logger.info('Launching App')
+            appium_driver.launch_app()
+
+    except Exception as e:
         logger.critical(e)
         raise
+
 
 @then('close the choco app', target_fixture='close_app')
 def close_app(appium_driver):
@@ -116,6 +125,7 @@ def close_app(appium_driver):
     except Exception as e:
         logger.critical(e)
         raise
+
 
 @given("I am on OTPInputActivity", target_fixture="go_to_OTPInputActivity")
 def go_to_OTPInputActivity(helper_tap_on_country_code,
@@ -161,9 +171,14 @@ def enter_otp(appium_driver, helper_enter_otp):
     helper_enter_otp(otp)
 
     logger.info(f"Checking if current activity is Onboard Success Activity")
-    onboard_success_activity = OnboardSuccessActivity()
+    try:
+        onboard_success_activity = OnboardSuccessActivity()
 
-    appium_driver.find_element(onboard_success_activity.title)
+        appium_driver.find_element(onboard_success_activity.title)
+    except NoSuchElementException as e:
+        message = f"Expected activity to be {onboard_success_activity} but found {OTPInputActivity()}"
+        logger.critical(message)
+        raise AssertionError(f"message")
 
 
 @when('tap on valid country from the filtered search result',

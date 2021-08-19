@@ -1,7 +1,8 @@
 from pytest_bdd import scenario, then, parsers, given
 
 
-@scenario('../features/onboard_to_choco_app.feature', 'Onboard into choco app when mobile is in landscape')
+@scenario('../features/onboard_to_choco_app.feature',
+          'Onboard into choco app when mobile is in landscape')
 def test_onboard_into_choco_app_when_mobile_is_in_landscape(appium_driver):
     """Onboard into choco app when mobile is in landscape."""
 

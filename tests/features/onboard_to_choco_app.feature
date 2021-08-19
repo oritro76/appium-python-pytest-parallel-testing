@@ -20,7 +20,7 @@ Background:
       | 49          | germany    |
       | germ        | germany    |
 
-  @debug
+
   Scenario: Onboard into choco app by entering phone number and then selecting country code
     When I enter valid phone number
     And tap on country code
@@ -30,7 +30,7 @@ Background:
     And enter valid OTP
     Then see the message "Welcome to Choco!!"
     And close the choco app
-  @debug
+
   Scenario: Onboard into choco app when mobile is in landscape
     Given mobile is in "landscape" orientation
     When I tap on country code
@@ -43,7 +43,7 @@ Background:
     And change mobile to "portrait" orientation
     And close the choco app
 
-
+    @debug
     Scenario: Tapping on back button in OTP input activity will take user to phone number input activity
     Given I am on OTPInputActivity
     When I tap on back button in otp input activity
@@ -76,8 +76,8 @@ Background:
     And see the message "Welcome to Choco!!"
     And close the choco app
 
-
-  Scenario: From OTPInputActivity back button press
+  @debug
+  Scenario: From OTPInputActivity device back button press
     Given I am on OTPInputActivity
     When tap on mobile back button
     Then in PhoneNumberInputActivity default country code "+1" should be shown

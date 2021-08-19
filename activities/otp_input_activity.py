@@ -14,5 +14,7 @@ class OTPInputActivity:
     title_text = 'We just sent you an SMS with a code. Please type it below!'
     loading_text = 'Loading…'
 
+    def __str__(self):
+        return "OTPInputActivity"
 
 

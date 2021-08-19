@@ -5,16 +5,10 @@ from assertpy import assert_that
 from activities.phone_number_input_activity import PhoneNumberInputActivity
 
 
-
-
-
-
 @scenario('../features/onboard_to_choco_app.feature',
-          'From OTPInputActivity back button press')
+          'From OTPInputActivity device back button press')
 def test_from_otpinputactivity_back_button_press(appium_driver):
     """From OTPInputActivity back button press."""
-
-
 
 
 @when("tap on mobile back button", target_fixture="press_android_back_button")

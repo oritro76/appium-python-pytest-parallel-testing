@@ -9,9 +9,11 @@ from loguru import logger
 from appium.webdriver.common.touch_action import TouchAction
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException, \
-                                       StaleElementReferenceException, \
-                                       TimeoutException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    StaleElementReferenceException,
+    TimeoutException
+)
 
 from devices.android.android_devices import android_desired_caps
 from devices.ios.ios_devices import ios_desired_caps
@@ -19,8 +21,7 @@ from conf.conf import SCREENSHOT_PATH
 from custom_excepitons.appium_exceptions import AppiumConnectionFailException, InvalidDeviceTypeException
 from custom_excepitons.env_variable_exceptions import EnvVariableNotSetException
 
-
-from conf.conf import TIMEOUT_FIND_LOCATOR
+from conf.conf import TIMEOUT_FIND_LOCATOR, APK_PACKAGE_NAME, APK_PATH
 
 
 class AppiumDriver():
@@ -56,14 +57,11 @@ class AppiumDriver():
         try:
             self.connection = webdriver.Remote(command_executor=self.hub_url,
                                                desired_capabilities=self.desired_caps)
-            return self.connection
         except Exception as e:
             logger.exception(e)
             raise AppiumConnectionFailException('Could not connect to appium server. '
                                                 'Please check if '
                                                 'appium server is running')
-
-
 
     def find_element(self, locator, timeout=TIMEOUT_FIND_LOCATOR):
         ignored_exceptions = (NoSuchElementException, StaleElementReferenceException,)
@@ -73,8 +71,8 @@ class AppiumDriver():
 
         try:
             return wait.until(EC.visibility_of_element_located(locator))
-
         except Exception as e:
+            logger.critical(e)
             logger.critical("Could not locate element with value: %s" % str(locator))
             raise NoSuchElementException("Could not locate element with value: %s" % str(locator))
 
@@ -84,6 +82,7 @@ class AppiumDriver():
         try:
             return wait.until(EC.visibility_of_all_elements_located(locator))
         except TimeoutException as e:
+            logger.critical(e)
             logger.critical("Could not locate element with value: %s" % str(locator))
             raise NoSuchElementException("Could not locate element with value: %s" % str(locator))
 
@@ -120,7 +119,11 @@ class AppiumDriver():
         return self.find_element(locator).is_enabled()
 
     def press_android_back_button(self):
-        self.connection.back()
+        try:
+            self.connection.back()
+        except Exception as e:
+            logger.critical(e)
+            raise
 
     def get_value_of_edit_text_widget(self, locator):
         self.find_element(locator).get_attribute('value')
@@ -138,13 +141,13 @@ class AppiumDriver():
         orientation.upper()
         self.connection.orientation = orientation
 
-    def is_app_installed(self, package):
+    def is_app_installed(self, package=APK_PACKAGE_NAME):
         return self.connection.is_app_installed(package)
 
-    def install_app(self, apk):
+    def install_app(self, apk=APK_PATH):
         self.connection.install_app(apk)
 
-    def get_app_state(self, package):
+    def get_app_state(self, package=APK_PACKAGE_NAME):
         return self.connection.query_app_state(package)
 
     def launch_app(self):

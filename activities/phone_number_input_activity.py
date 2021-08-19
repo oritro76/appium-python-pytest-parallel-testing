@@ -21,4 +21,5 @@ class PhoneNumberInputActivity:
     button_text = 'Continue'
     error_text = 'That phone number isn’t valid, are you sure you entered it correctly?'
 
-
+    def __str__(self):
+        return "PhoneNumberInputActivity"
