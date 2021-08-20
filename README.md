@@ -104,21 +104,26 @@ source venv/bin/activate
 ```commandline
 pip install -r requirements.txt
 ```
-### Before Running the tests
-1. Start 3 or less android emulators.
-After starting please change the emulator name change the platformVersion and deviceName in desired capabilities in the required devices/android/android_devices.py
+### Note:
+Currently, supports running parallel tests in 3 devices.
+
+### Before Running the tests 
+1. After starting emulators please change the platformVersion and deviceName in desired capabilities in the required devices/android/android_devices.py
 2. Start the appium server
 
 ### Test Markers
 Two markers have been introduced.
 1. choco -> Run all the tests. For marking feature
 2. debug -> Run single or multiple tests. For Marking scenarios 
-3. successful-onboard: marks all the scenarios related to successful onboard 
-4. other: marks all the scenarios which are not related to successful onboard
+3. successful-onboard-> marks all the scenarios related to successful onboard 
+4. other-> marks all the scenarios which are not related to successful onboard
 
 #### Run tests
-To run tests runner.py has been introduced. Runner.py takes the below arguments
-usage: runner.py [-h] [-d {android,ios}] [-hu HUBHOST] [-hp HUBPORT] [--hubprotocol {http,https}] [--devnum DEVNUM] [--testmarker TESTMARKER]
+To run tests, runner.py has been introduced. Runner.py takes the below arguments
+
+usage: 
+```
+runner.py [-h] [-d {android,ios}] [-hu HUBHOST] [-hp HUBPORT] [--hubprotocol {http,https}] [--devnum DEVNUM] [--testmarker TESTMARKER]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -133,22 +138,15 @@ optional arguments:
   --devnum DEVNUM       specify number of devices
   --testmarker TESTMARKER
                         mark tests
+```
+
 
 1. Go to project root directory
-2. Running runner,ppy with default python runner.py --devnum 
-
-### runner.sh
-runner.sh takes three arguments.
-1. device type {android, ios}
-2. hub url ex: http://127.0.0.1:4723/wd/hub
-3. marker {choco, debug}
-
-to run runner.sh use either one of the methods
-chmod
+2. Run runner.py with default arguments python runner.py
 ```
 python runner.py --devnum 2
 ```
-Run show_report.sh to see the report
+3. Run show_report.sh to see the report
 
 ```
 chmod +x show_report.sh
