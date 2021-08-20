@@ -83,7 +83,7 @@ Python 3.8, Appium, Pytest-BDD, Allure Reports, Pytest-xdist
 
 #### Clone the repo
 ```
-git clone git@github.com:choco-hire/QA-automation-exercise-AritraB.git
+git clone git@github.com:oritro76/appium-python-pytest-parallel-testing.git
 ```
 
 #### Create vitual environment for the project

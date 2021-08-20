@@ -1,4 +1,3 @@
-import pytest
 from loguru import logger
 from assertpy import assert_that
 from pytest_bdd import given, when, then, parsers
