@@ -76,14 +76,14 @@ if len(devices) == 0:
     print("No devices attached. Please attach a device/emulator.")
     sys.exit()
 
-elif len(devices) != int(num_device):
+elif int(num_device) > len(devices):
     print(f"Found connected devices {len(devices)} but given as arg {int(num_device)}")
     sys.exit()
 
 os.environ["DEVICE_TYPE"] = device_type
 os.environ["HUB_URL"] = hub_protocol + "://" + hub_host + ":" + hub_port + "/wd/hub"
 
-for temp in range(int(num_device)):
+for temp in reversed(range(int(num_device))):
     os.environ[udid + str(temp)] = devices[temp]
     print(os.environ[udid + str(temp)])
 
