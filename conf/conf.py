@@ -13,3 +13,4 @@ APK_PACKAGE_NAME = "app.choco.dummyqa"
 APP_ACTIVITY = "SplashScreenActivity"
 
 TIMEOUT_FIND_LOCATOR = 30
+DRIVER_WAIT = 10

@@ -24,5 +24,6 @@ def check_phone_number_is_shown_where_otp_was_sent(appium_driver, context):
     try:
         assert_that(text).contains(phone_number)
     except AssertionError as e:
+        appium_driver.save_screenshot(str(e))
         logger.critical(e)
         raise

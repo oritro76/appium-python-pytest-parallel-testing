@@ -6,7 +6,6 @@ android_desired_caps = {"device1": {
                                         "deviceName": "Android Emulator",
                                         "automationName": "UiAutomator2",
                                         "udid": "emulator-5554",
-                                        "systemPort": 8200,
                                         **android_common_desired_caps
                                     },
                         "device2": {
@@ -15,7 +14,6 @@ android_desired_caps = {"device1": {
                                         "deviceName": "Android Emulator",
                                         "automationName": "UiAutomator2",
                                         "udid": "emulator-5556",
-                                        "systemPort": 8205,
                                         **android_common_desired_caps
                                 }
                         }

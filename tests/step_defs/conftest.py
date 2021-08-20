@@ -12,94 +12,6 @@ from activities.onboard_success_activity import OnboardSuccessActivity
 from data.data_gen import DataGenerator
 
 
-
-@pytest.fixture(scope='function')
-def context():
-    return {}
-
-
-@pytest.fixture(scope="function")
-def helper_tap_on_country_code(appium_driver):
-    def _helper_tap_on_country_code():
-        logger.info('Tapping on country code')
-        phone_number_input_activity = PhoneNumberInputActivity()
-        appium_driver.tap(phone_number_input_activity.country_code_select)
-
-    return _helper_tap_on_country_code
-
-
-@pytest.fixture(scope='function')
-def helper_enter_text_to_filter_countries(appium_driver):
-    def _helper_enter_text_to_filter_countries(text):
-        logger.info(f'Entering {text} to filter')
-        phone_number_input_activity = PhoneNumberInputActivity()
-        appium_driver.enter_text(phone_number_input_activity.country_code_filter_input,
-                                               text)
-    return _helper_enter_text_to_filter_countries
-
-
-@pytest.fixture(scope='function')
-def helper_tap_on_country_from_filter_result(appium_driver):
-    def _helper_tap_on_country_from_filter_result(country):
-        logger.info(f'Tapping on {country} to select as country code')
-        phone_number_input_activity = PhoneNumberInputActivity()
-        appium_driver.tap_on_filtered_result_on_basis_of_country(phone_number_input_activity.country_code_title_text_view,
-                                                                 country=country)
-
-    return _helper_tap_on_country_from_filter_result
-
-
-@pytest.fixture(scope='function')
-def helper_change_mobile_orientation(appium_driver):
-    def _helper_change_mobile_orientation(orientation):
-
-        logger.info(f"Changing mobile orientation to {orientation}")
-        appium_driver.change_device_orientation(orientation)
-    return _helper_change_mobile_orientation
-
-
-@pytest.fixture(scope='function')
-def helper_enter_phone_number(appium_driver):
-
-    def _helper_enter_phone_number(phone_number):
-        logger.info(f'Entering phone number {phone_number}')
-        phone_number_input_activity = PhoneNumberInputActivity()
-        appium_driver.enter_text(phone_number_input_activity.phone_number_input,
-                                               phone_number)
-    return _helper_enter_phone_number
-
-
-@pytest.fixture(scope='function')
-def helper_tap_on_button_in_phone_number_input_activity(appium_driver):
-    def _helper_tap_on_button_in_phone_number_input_activity(button_text):
-        phone_number_input_activity = PhoneNumberInputActivity()
-        text = appium_driver.get_text(phone_number_input_activity.button)
-
-        logger.info(f"Tapping on {button_text} button")
-
-        appium_driver.tap(phone_number_input_activity.button)
-
-        try:
-            assert_that(button_text).is_equal_to(text)
-        except AssertionError as e:
-            logger.critical(e)
-            raise
-
-        logger.info(f"Checking if current activity is OTP Input Activity")
-        otp_input_activity = OTPInputActivity()
-        appium_driver.find_elements(otp_input_activity.otp_input)
-    return _helper_tap_on_button_in_phone_number_input_activity
-
-
-@pytest.fixture(scope='function')
-def helper_enter_otp(appium_driver):
-    def _helper_enter_otp(otp):
-        otp_input_activity = OTPInputActivity()
-        logger.info(f"Entering otp {otp}")
-        appium_driver.enter_otp(otp_input_activity.otp_input, otp=otp)
-    return _helper_enter_otp
-
-
 @given("the choco app is opened in a mobile", target_fixture="open_app")
 def open_app(appium_driver):
     try:
@@ -165,7 +77,7 @@ def enter_phone_number(helper_enter_phone_number, context):
 
 @then(parsers.parse('enter valid OTP'), target_fixture="enter_otp")
 @when(parsers.parse('enter valid OTP'), target_fixture="enter_otp")
-def enter_otp(appium_driver, helper_enter_otp):
+def enter_otp(appium_driver, helper_enter_otp, request):
     otp = DataGenerator().get_valid_otp()
 
     helper_enter_otp(otp)
@@ -177,6 +89,7 @@ def enter_otp(appium_driver, helper_enter_otp):
         appium_driver.find_element(onboard_success_activity.title)
     except NoSuchElementException as e:
         message = f"Expected activity to be {onboard_success_activity} but found {OTPInputActivity()}"
+        appium_driver.save_screenshot(message)
         logger.critical(message)
         raise AssertionError(f"message")
 
@@ -206,6 +119,7 @@ def check_correct_message_is_shown_in_onboard_success_activity(appium_driver, me
     try:
         assert_that(element_text).is_equal_to(message)
     except AssertionError as e:
+        appium_driver.save_screenshot(str(e))
         logger.critical(e)
         raise
 

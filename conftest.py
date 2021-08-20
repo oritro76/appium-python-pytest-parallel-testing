@@ -8,14 +8,21 @@ from driver.appium_driver import AppiumDriver
 from conf.conf import TESTS_LOG_DIR_PATH
 
 
-@pytest.fixture(scope='module', params=['device1', 'device2'])
-def appium_driver(request):
+pytest_plugins = [
+    "tests.fixtures.test_helpers"
+]
+
+
+@pytest.fixture(scope='module')
+def appium_driver():
     appium_driver = AppiumDriver()
-    appium_driver.connect(request.param)
+    appium_driver.connect()
+
     yield appium_driver
 
     logger.info('Quiting Appium server connection')
     appium_driver.quit()
+    logger.info("quit driver session")
 
 
 @pytest.fixture
@@ -86,18 +93,17 @@ def pytest_bdd_after_step(request, feature, scenario, step, step_func, step_func
 
 
 def pytest_bdd_step_error(request, feature, scenario, step, step_func, step_func_args, exception):
-    appium_driver = AppiumDriver()
 
     logger.info(f"{request.node.name} error happened")
-    logger.info("Taking screenshot")
-    try:
-        appium_driver.save_screenshot(scenario.name)
-
-        appium_driver.reset_app()
-    except AttributeError as e:
-        logger.exception(e)
-    except Exception as e:
-        logger.exception(e)
+    # logger.info("Taking screenshot")
+    # try:
+    #     appium_driver.save_screenshot(scenario.name)
+    #
+    #     appium_driver.close_app()
+    # except AttributeError as e:
+    #     logger.exception(e)
+    # except Exception as e:
+    #     logger.exception(e)
 
 
 

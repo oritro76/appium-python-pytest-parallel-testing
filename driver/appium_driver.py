@@ -2,7 +2,6 @@ from datetime import datetime
 import os
 import base64
 import io
-
 from PIL import Image
 from appium import webdriver
 from loguru import logger
@@ -22,6 +21,7 @@ from custom_excepitons.appium_exceptions import AppiumConnectionFailException, I
 from custom_excepitons.env_variable_exceptions import EnvVariableNotSetException
 
 from conf.conf import TIMEOUT_FIND_LOCATOR, APK_PACKAGE_NAME, APK_PATH
+from utils.functions import android_system_port, device
 
 
 class AppiumDriver():
@@ -44,10 +44,11 @@ class AppiumDriver():
     hub_url = os.getenv('HUB_URL')
     logger.info(f'appium server url is {hub_url}')
 
-    def connect(self, device):
+    def connect(self):
         if self.connection is None:
             if self.device_type.lower() == self.ANDROID:
-                self.desired_caps = android_desired_caps[device]
+                self.desired_caps = android_desired_caps[device()]
+                self.desired_caps['systemPort'] = android_system_port()
             elif self.device_type.lower() == self.IOS:
                     self.desired_caps = ios_desired_caps
             else:

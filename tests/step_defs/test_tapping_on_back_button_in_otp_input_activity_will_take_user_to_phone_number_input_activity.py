@@ -32,5 +32,6 @@ def check_current_activity_is_phone_number_input_activity(appium_driver):
         appium_driver.find_element(phone_number_input_activity.phone_number_input)
     except NoSuchElementException as e:
         message = f"Expected activity to be {phone_number_input_activity} but found {OTPInputActivity()}"
+        appium_driver.save_screenshot(message)
         logger.critical(message)
         raise AssertionError(message)

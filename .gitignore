@@ -142,4 +142,6 @@
 **/test_results
 **/.idea
 **/screenshots
+temp.txt
+adb_uninstall.sh
 

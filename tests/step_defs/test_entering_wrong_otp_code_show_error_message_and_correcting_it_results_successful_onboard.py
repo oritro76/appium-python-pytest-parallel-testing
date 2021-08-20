@@ -30,6 +30,7 @@ def check_loading_text_is_shown(appium_driver, loading_text):
     try:
         assert_that(text).contains(loading_text)
     except AssertionError as e:
+        appium_driver.save_screenshot(str(e))
         logger.critical(e)
         raise
 
@@ -44,5 +45,6 @@ def check_correct_error_message_is_shown_for_wrong_otp(appium_driver, err_text):
     try:
         assert_that(error_text).contains(err_text)
     except AssertionError as e:
+        appium_driver.save_screenshot(str(e))
         logger.critical(e)
         raise

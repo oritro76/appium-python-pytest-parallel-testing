@@ -27,6 +27,7 @@ def check_phone_number_input_default_country_code(appium_driver, default_country
     try:
         assert_that(country_code).is_equal_to(default_country_code)
     except AssertionError as e:
+        appium_driver.save_screenshot(str(e))
         logger.critical(e)
         raise
 
@@ -43,6 +44,7 @@ def check_button_is_enabled(appium_driver, button_text):
     try:
         assert_that(is_enabled).is_true()
     except AssertionError as e:
+        appium_driver.save_screenshot(str(e))
         logger.critical(e)
         raise
 
@@ -60,5 +62,6 @@ def check_phone_number_input_field_cleared(appium_driver):
     try:
         assert_that(text).is_equal_to("")
     except AssertionError as e:
+        appium_driver.save_screenshot(str(e))
         logger.critical(e)
         raise

@@ -43,5 +43,6 @@ def check_correct_error_message_is_shown_for_wrong_country_code_wrong_phone_numb
     try:
         assert_that(text).contains(err_text)
     except AssertionError as e:
+        appium_driver.save_screenshot(str(e))
         logger.critical(e)
         raise
