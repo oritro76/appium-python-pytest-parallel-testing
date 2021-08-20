@@ -5,7 +5,6 @@ android_desired_caps = {"device1": {
                                         "platformVersion": "11",
                                         "deviceName": "Android Emulator",
                                         "automationName": "UiAutomator2",
-                                        "udid": "emulator-5554",
                                         **android_common_desired_caps
                                     },
                         "device2": {
@@ -13,7 +12,13 @@ android_desired_caps = {"device1": {
                                         "platformVersion": "10",
                                         "deviceName": "Android Emulator",
                                         "automationName": "UiAutomator2",
-                                        "udid": "emulator-5556",
                                         **android_common_desired_caps
-                                }
+                                },
+                        "device3": {
+                                        "platformName": "Android",
+                                        "platformVersion": "10",
+                                        "deviceName": "realme 3 pro",
+                                        "automationName": "UiAutomator2",
+                                        **android_common_desired_caps
+                                    },
                         }

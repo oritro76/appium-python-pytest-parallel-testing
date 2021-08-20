@@ -21,7 +21,7 @@ from custom_excepitons.appium_exceptions import AppiumConnectionFailException, I
 from custom_excepitons.env_variable_exceptions import EnvVariableNotSetException
 
 from conf.conf import TIMEOUT_FIND_LOCATOR, APK_PACKAGE_NAME, APK_PATH
-from utils.functions import android_system_port, device
+from utils.functions import android_system_port, device, udid
 
 
 class AppiumDriver():
@@ -49,6 +49,7 @@ class AppiumDriver():
             if self.device_type.lower() == self.ANDROID:
                 self.desired_caps = android_desired_caps[device()]
                 self.desired_caps['systemPort'] = android_system_port()
+                self.desired_caps['udid'] = udid()
             elif self.device_type.lower() == self.IOS:
                     self.desired_caps = ios_desired_caps
             else:

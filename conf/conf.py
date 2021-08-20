@@ -12,5 +12,5 @@ SCREENSHOT_PATH = os.path.join(ROOT_DIR, 'screenshots')
 APK_PACKAGE_NAME = "app.choco.dummyqa"
 APP_ACTIVITY = "SplashScreenActivity"
 
-TIMEOUT_FIND_LOCATOR = 30
+TIMEOUT_FIND_LOCATOR = 10
 DRIVER_WAIT = 10

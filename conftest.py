@@ -13,7 +13,7 @@ pytest_plugins = [
 ]
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='function')
 def appium_driver():
     appium_driver = AppiumDriver()
     appium_driver.connect()
