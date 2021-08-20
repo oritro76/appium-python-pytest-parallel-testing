@@ -112,7 +112,7 @@ Currently, supports running parallel tests in 3 devices.
 2. Start the appium server
 
 ### Test Markers
-Two markers have been introduced.
+Four markers have been introduced.
 1. choco -> Run all the tests. For marking feature
 2. debug -> Run single or multiple tests. For Marking scenarios 
 3. successful-onboard-> marks all the scenarios related to successful onboard 
