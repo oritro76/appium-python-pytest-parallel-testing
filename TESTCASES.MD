@@ -16,7 +16,9 @@ Background:
     Given I am on PhoneNumberInputActivity
     Then Check in PhoneNumberInputActivity has proper title, descriptoion title and default country code
     
+
     Scenario: In OTPInputActivity title, description are shown 
+
     Given I am on OTPInputActivity
     Then Check in OTPInputActivity has proper title and description
 
