@@ -1,20 +1,22 @@
 import argparse
-import subprocess
 import os
 import sys
-import re
+import subprocess
 
-adb_command_get_udid = "ad"
+from utils.functions import (
+    adb_get_device_udids,
+    adb_get_device_android_version,
+    adb_get_device_name
+)
+
+from utils.constants import udid, android_device_os, android_device_name
 
 device_type = "android"
 hub_host = "127.0.0.1"
 hub_port = "4723"
 hub_protocol = "http"
 num_device = "0"
-udid = "udid"
 marker = "choco"
-
-
 
 parser = argparse.ArgumentParser()
 
@@ -64,16 +66,17 @@ if args.hubprotocol:
     hub_protocol = args.hubprotocol
 
 if args.devnum:
-    print(args.devnum)
     num_device = args.devnum
 
-process = subprocess.check_output(['adb', 'devices'])
+devices = adb_get_device_udids()
 
-devices = re.findall('\\n(.*?)\\t', process.decode("utf-8") )
-
-if 3 < int(num_device) <= 0:
-    print("Running max 3 devices are supported")
+if num_device == "0":
+    print("please provide --devnum argument's value")
     sys.exit()
+
+# if 3 < int(num_device) <= 0:
+#     print("Running max 3 devices are supported")
+#     sys.exit()
 
 if len(devices) == 0:
     print("No devices attached. Please attach a device/emulator.")
@@ -86,9 +89,10 @@ elif int(num_device) > len(devices):
 os.environ["DEVICE_TYPE"] = device_type
 os.environ["HUB_URL"] = hub_protocol + "://" + hub_host + ":" + hub_port + "/wd/hub"
 
-for temp in reversed(range(int(num_device))):
+for temp in range(int(num_device)):
     os.environ[udid + str(temp)] = devices[temp]
-    print(os.environ[udid + str(temp)])
+    os.environ[android_device_name + str(temp)] = adb_get_device_name(devices[temp])
+    os.environ[android_device_os + str(temp)] = adb_get_device_android_version(devices[temp])
 
 
 test_env = os.environ.copy()
