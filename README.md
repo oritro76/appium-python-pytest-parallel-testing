@@ -10,22 +10,39 @@ Python 3.8, Appium, Pytest-BDD, Allure Reports, Pytest-xdist
 4. Install Python from https://www.python.org/downloads/
 5. Install virtualenv from https://virtualenv.pypa.io/en/latest/installation.html
 
+## Solution Explained
+This solution can test the testcases in multiple devices. As a result test execution time improves significantly. Find below the time taken for all test case execution in local machine:
+#### 1 Device
+277.56s (0:04:37)
+#### 2 Devices
+168.26s (0:02:48)
+#### 3 Devices
+119.15s (0:01:59)
+
+### Test Markers
+Four markers have been introduced.
+1. choco -> Run all the tests. For marking feature
+2. debug -> Run single or multiple tests. For Marking scenarios 
+3. successful-onboard-> marks all the scenarios related to successful onboard 
+4. other-> marks all the scenarios which are not related to successful onboard
+
+
 ## Project Structure At A Glance
 ```
 |-- activities
 |   |-- __init__.py
 |   |-- onboard_success_activity.py
 |   |-- otp_input_activity.py
-|   |-- phone_number_input_activity.py
+|   `-- phone_number_input_activity.py
 |-- conf
 |   |-- conf.py
-|   |-- __init__.py
+|   `-- __init__.py
 |-- conftest.py
 |-- custom_excepitons
 |   |-- appium_exceptions.py
 |   |-- base_exception.py
 |   |-- env_variable_exceptions.py
-|   |-- __init__.py
+|   `-- __init__.py
 |-- data
 |   |-- apps
 |   |   |-- android
@@ -38,15 +55,15 @@ Python 3.8, Appium, Pytest-BDD, Allure Reports, Pytest-xdist
 |-- devices
 |   |-- android
 |   |   |-- android_devices.py
-|   |   |-- __init__.py
+|   |   `-- __init__.py
 |   |-- common_desire_cps.py
 |   |-- __init__.py
-|   |-- ios
-|   |   |-- __init__.py
-|   |   |-- ios_devices.py
+|   `-- ios
+|       |-- __init__.py
+|       `-- ios_devices.py
 |-- driver
 |   |-- appium_driver.py
-|   |-- __init__.py
+|   `-- __init__.py
 |-- logs
 |   `-- tests
 |-- pytest.ini
@@ -75,51 +92,46 @@ Python 3.8, Appium, Pytest-BDD, Allure Reports, Pytest-xdist
 |       |-- test_tapping_on_back_button_in_otp_input_activity_will_take_user_to_phone_number_input_activity.py
 |       `-- test_wrong_country_code_wrong_and_invalid_phone_number_input_shows_error_message.py
 `-- utils
+    |-- adb_commands.py
     |-- classes.py
+    |-- constants.py
     |-- functions.py
-    |-- __init__.py
+    `-- __init__.py
+
 ```
 ## Getting Started
 
 #### Clone the repo
 ```
-git clone git@github.com:oritro76/appium-python-pytest-parallel-testing.git
+git clone git@github.com:<repo_name>
 ```
 
 #### Create vitual environment for the project
-```commandline
+```
 virtualenv venv
 ```
 #### Activate the virtual environment
 Windows
-```commandline
+```
 venv\Scripts\activate
 ```
 Linux
-```commandline
+```
 source venv/bin/activate
 ```
 #### Install requirements
 
-```commandline
+```
 pip install -r requirements.txt
 ```
-### Note:
-Currently, supports running parallel tests in 3 devices.
 
 ### Before Running the tests 
-1. After starting emulators please change the platformVersion and deviceName in desired capabilities in the required devices/android/android_devices.py
-2. Start the appium server
+1. Start the appium server
+2. Start Android Emulators or connect real devices
 
-### Test Markers
-Four markers have been introduced.
-1. choco -> Run all the tests. For marking feature
-2. debug -> Run single or multiple tests. For Marking scenarios 
-3. successful-onboard-> marks all the scenarios related to successful onboard 
-4. other-> marks all the scenarios which are not related to successful onboard
 
 #### Run tests
-To run tests, runner.py has been introduced. Runner.py takes the below arguments
+To run tests, runner.py has been introduced. 
 
 usage: 
 ```
@@ -142,7 +154,7 @@ optional arguments:
 
 
 1. Go to project root directory
-2. Run runner.py with default arguments python runner.py
+2. Run runner.py with with argument `devnum` if appium is running locally and connected to `4723` port
 ```
 python runner.py --devnum 2
 ```
