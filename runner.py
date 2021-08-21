@@ -3,7 +3,8 @@ import subprocess
 import os
 import sys
 import re
-import pytest
+
+adb_command_get_udid = "ad"
 
 device_type = "android"
 hub_host = "127.0.0.1"
@@ -12,6 +13,8 @@ hub_protocol = "http"
 num_device = "0"
 udid = "udid"
 marker = "choco"
+
+
 
 parser = argparse.ArgumentParser()
 
@@ -68,7 +71,7 @@ process = subprocess.check_output(['adb', 'devices'])
 
 devices = re.findall('\\n(.*?)\\t', process.decode("utf-8") )
 
-if int(num_device) > 3 and int(num_device) <= 0:
+if 3 < int(num_device) <= 0:
     print("Running max 3 devices are supported")
     sys.exit()
 
